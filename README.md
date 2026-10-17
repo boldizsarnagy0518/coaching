@@ -14,8 +14,9 @@ Frissítve: 2026. október 17. Jelenleg helyi edzői naplózó prototípus műk�
 | Demóadat és kezelői parancsok | Szintetikus példa meglévő fiókhoz | [management](training/management/README.md) |
 | Felület és űrlapok | Magyar, szerveroldali edzői képernyők | [templates](templates/README.md) |
 | Megjelenés | Egy reszponzív stíluslap | [static](static/README.md) |
-| Automatizált ellenőrzés | 14 helyi teszt sikeres; CI definiálva | [workflows](.github/workflows/README.md) |
+| Automatizált ellenőrzés | 25 helyi teszt sikeres; CI definiálva | [workflows](.github/workflows/README.md) |
 | Tervezés és validáció | Dokumentálva; piaci kapu még nyitott | [docs](docs/README.md) |
+| CSV és Google Sheets | CSV-export, fájl- és publikált linkes előnézet | [Adatátadás](docs/data-transfer/README.md) |
 
 Minden rész README-je azonos szerkezetben írja le a felelősséget, a működő és hiányzó elemeket, a **mit–miért–következmény** döntéseket, az ellenőrzést és a következő lépést. Funkcióváltozáskor az érintett README is frissítendő. A pontos szabály a [dokumentációs útmutatóban](docs/README.md) található.
 
@@ -56,7 +57,7 @@ uv run python manage.py test
 
 Sportoló → terv → edzés → előírt sorozat → tényleges teljesítés. Az edző csak a saját sportolóit éri el; az előírt és tényleges adatok külön tárolódnak. Az ismételt azonos naplóbeküldés nem dupláz. A felület magyar és telefonra igazított.
 
-Ez helyi, szintetikus adatokkal használható **edzői prototípus**. Még nincs sportolói saját belépés, verziózott újratervezés, CSV-import vagy AI-integráció. A napló utólagos szerkesztése nincs kész; eltérő ismételt beküldésnél a rendszer 409-es ütközést jelez és megőrzi a korábbi adatot.
+Ez helyi, szintetikus adatokkal használható **edzői prototípus**. CSV-export és CSV/Google Sheets-előnézet már van; jóváhagyott import, privát Google-kapcsolat, sportolói saját belépés, verziózott újratervezés és AI-integráció még nincs. A napló utólagos szerkesztése nincs kész; eltérő ismételt beküldésnél a rendszer 409-es ütközést jelez és megőrzi a korábbi adatot.
 
 - [Részletes állapot és következő feladatok](docs/implementation-status.md)
 - [Validációs munkalap](docs/validation-template.md)

@@ -1,4 +1,5 @@
 import uuid
+import csv
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -7,8 +8,45 @@ from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import AthleteForm, PlanForm, SessionForm, PlannedSetForm, SetLogForm
+from .forms import AthleteForm, PlanForm, SessionForm, PlannedSetForm, SetLogForm, TransferPreviewForm
+from .transfers import read_csv, download_sheet, safe_cell, MAX_BYTES
 from .models import Athlete, TrainingPlan, TrainingSession, PlannedSet, SetLog
+
+
+@login_required
+def export_csv(request, pk):
+    athlete = get_object_or_404(Athlete, pk=pk, coach=request.user)
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = f'attachment; filename="athlete-{athlete.pk}-journal.csv"'
+    response["Cache-Control"] = "no-store"
+    response.write("\ufeff")
+    writer = csv.writer(response)
+    writer.writerow(["plan", "session", "scheduled_date", "exercise", "planned_reps", "planned_weight_kg",
+        "actual_reps", "actual_weight_kg", "rpe", "recorded_at"])
+    items = PlannedSet.objects.filter(session__plan__athlete=athlete).select_related("session__plan", "performance").order_by("session__scheduled_date", "session_id", "pk")
+    for item in items.iterator():
+        log = getattr(item, "performance", None)
+        writer.writerow([safe_cell(value) for value in [item.session.plan.title, item.session.title,
+            item.session.scheduled_date.isoformat(), item.exercise, item.reps, item.weight_kg,
+            log.reps if log else None, log.weight_kg if log else None, log.rpe if log else None,
+            log.recorded_at.isoformat() if log else None]])
+    return response
+
+
+@login_required
+def transfer_preview(request, pk):
+    athlete = get_object_or_404(Athlete, pk=pk, coach=request.user)
+    form = TransferPreviewForm(request.POST if request.method == "POST" else None, request.FILES)
+    preview = None
+    if request.method == "POST" and form.is_valid():
+        try:
+            file = form.cleaned_data.get("csv_file")
+            preview = read_csv(file.read(MAX_BYTES + 1)) if file else download_sheet(form.cleaned_data["sheet_url"])
+        except ValueError as exc:
+            form.add_error(None, str(exc))
+    response = render(request, "training/transfer.html", {"athlete": athlete, "form": form, "preview": preview})
+    response["Cache-Control"] = "no-store"
+    return response
 
 
 @login_required

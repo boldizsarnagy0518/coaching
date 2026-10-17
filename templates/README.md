@@ -36,4 +36,6 @@ A [funkcionális tesztek](../training/tests.py) ellenőrzik a válaszokat, a meg
 
 ## Következő lépés
 
+Új képernyő: [training/transfer.html](training/transfer.html). Fájlfeltöltés vagy publikált Google Sheets CSV-link után táblázatos előnézetet mutat. Az oszlop-hozzárendelés és a jóváhagyott import még nincs kész. A sportoló lapjáról a CSV-export is elérhető. [Működés és döntések](../docs/data-transfer/README.md).
+
 A [tervverziózás](../docs/implementation-status.md) után előtte/utána nézet és jóváhagyás. Külön használati próba kell annak mérésére, hogy a naplózás telefonon segítség nélkül végigvihető-e. Megjelenési döntések: [static](../static/README.md).

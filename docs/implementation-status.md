@@ -19,6 +19,8 @@ Ez előrehozott technikai alap a felhasználó implementálási kérése alapjá
 
 ## Nyitott validáció
 
+Új műszaki rész: CSV-export, feltöltött CSV és publikált Google Sheets CSV-link szerkezeti előnézete. Ez még nem importál adatot. Privát Google-hitelesítés nincs. [Állapot és döntések](data-transfer/README.md). Ellenőrzés: 25 helyi teszt sikeres; az online lekérés szimulált válasszal tesztelt.
+
 - Saját valós esetek dokumentálása; nincs kitalált interjú vagy ügyféladat.
 - Edzői/sportolói interjúk és legalább 5 teljes kézi módosítás időmérése.
 - Kaizer és egy további alternatíva tényleges kipróbálása.
@@ -32,6 +34,6 @@ Ez előrehozott technikai alap a felhasználó implementálási kérése alapjá
 
 ## Még nincs kész
 
-Sportolói saját belépés; CSV-import/export; múltbeli napló korrekciós folyamata; teljes offline működés; tervverziók; automatikus újratervezés; AI/MCP; számlázás; nyilvános telepítés; üzemeltetési mentés-visszaállítás és teljes adatkezelési folyamat.
+Sportolói saját belépés; jóváhagyott CSV-import és oszlop-hozzárendelés; privát Google Sheets-kapcsolat; múltbeli napló korrekciós folyamata; teljes offline működés; tervverziók; automatikus újratervezés; AI/MCP; számlázás; nyilvános telepítés; üzemeltetési mentés-visszaállítás és teljes adatkezelési folyamat.
 
 A mostani felület edzői használatra készült: az edző rögzíti a sportoló adatait. Az alkalmazás nem módosít automatikusan terhelést és nem ad sérüléskezelési tanácsot. Valós sportolói adatok éles szolgáltatására még nem alkalmas.

@@ -46,6 +46,8 @@ Az 1–100 célismétlés, 0–100 tényleges ismétlés és 1–10 RPE **bevite
 
 ## Következő lépés
 
+Új alrész: [CSV és Google Sheets](../docs/data-transfer/README.md). A `transfers.py` közös CSV-olvasót és korlátozott online letöltést ad; a nézetek saját sportolóhoz kötött exportot és csak olvasható előnézetet biztosítanak. A teljes csomag most 25 sikeres helyi teszt: 14 eredeti és 11 új adatátadási teszt a [test_transfers.py](test_transfers.py) fájlban.
+
 Tervverziók, majd strukturált áthelyezési kérés, ellenőrizhető javaslat és edzői jóváhagyás. A mostani modul nem tervez újra, nem hív AI-t és nem ad sérüléskezelési tanácsot.
 
 Kapcsolódó részletek: [adatbázismigrációk](migrations/README.md), [demóadat](management/README.md), [felület](../templates/README.md).

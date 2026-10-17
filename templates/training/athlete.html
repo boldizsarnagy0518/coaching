@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}<a href="{% url 'dashboard' %}">← Sportolók</a>
 <div class="page-heading"><div><h1>{{ athlete.name }}</h1><p>Edzéstervek</p></div><a class="button" href="{% url 'plan-create' athlete.pk %}">+ Új terv</a></div>
+<p><a href="{% url 'export-csv' athlete.pk %}">Napló letöltése CSV-ben</a> · <a href="{% url 'transfer-preview' athlete.pk %}">CSV / Google Sheets előnézet</a></p>
 <div class="grid">{% for plan in athlete.plans.all %}<a class="panel card" href="{% url 'plan' plan.pk %}"><h2>{{ plan.title }}</h2><span>Edzések megnyitása →</span></a>{% empty %}<p class="panel">Még nincs rögzített terv.</p>{% endfor %}</div>{% endblock %}

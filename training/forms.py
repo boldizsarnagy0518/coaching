@@ -33,3 +33,14 @@ class SetLogForm(forms.ModelForm):
     class Meta:
         model = SetLog
         fields = ["reps", "weight_kg", "rpe"]
+
+
+class TransferPreviewForm(forms.Form):
+    csv_file = forms.FileField(label="Letöltött CSV-fájl", required=False)
+    sheet_url = forms.URLField(label="Publikált Google Sheets CSV-link", required=False)
+
+    def clean(self):
+        data = super().clean()
+        if bool(data.get("csv_file")) == bool(data.get("sheet_url")):
+            raise forms.ValidationError("Vagy CSV-fájlt válassz, vagy Google Sheets-linket adj meg.")
+        return data

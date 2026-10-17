@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("athletes/<int:pk>/export.csv", views.export_csv, name="export-csv"),
+    path("athletes/<int:pk>/transfer/", views.transfer_preview, name="transfer-preview"),
     path("", views.dashboard, name="dashboard"),
     path("athletes/new/", views.athlete_create, name="athlete-create"),
     path("athletes/<int:pk>/", views.athlete_detail, name="athlete"),

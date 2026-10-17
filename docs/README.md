@@ -12,6 +12,7 @@ Elkülöníteni a működő terméket, a tervezett funkciókat és a még nem ig
 |---|---|
 | [Implementálási állapot](implementation-status.md) | Rövid összesítés arról, mi készült el és mi következik |
 | [Validációs munkalap](validation-template.md) | Üres sablon interjúhoz, időméréshez és konkurenspróbához |
+| [CSV és Google Sheets](data-transfer/README.md) | Adatátadási módok, korlátok és a privát kapcsolat terve |
 | [Aktuális ütemterv](../elso_szakasz_utemterv.md) | 17 munkahét, heti 10 + 2 óra, költözési szünet és kapuk |
 | [Kutatás és termékterv](../eroemelo_ai_kutatas_es_terv.md) | Források, alternatívák, árazási és szakmai hipotézisek |
 
