@@ -1,35 +1,36 @@
-# Alkalmazáskonfiguráció és belépés
+# Application configuration and login
 
-[Projektáttekintés](../README.md) · Frissítve: 2026. október 17.
+[Project overview](../README.md) · Updated: 17 October 2026
 
-## Felelősség
+## Responsibility
 
-A Django-projekt összeállítása: adatbázis, munkamenetek, bejelentkezés, útvonalak, sablonok és helyi beállítások. Az edzési adatok és azok hozzáférési szűrése a [training modulban](../training/README.md) vannak.
+Assembles the Django project: database, sessions, login, URL routing, templates and local settings. Training data and its access filtering live in the [training module](../training/README.md).
 
-## Aktuális állapot
+## Current state
 
-- A [settings.py](settings.py) a [configuration.py](configuration.py) beállításait tölti be.
-- SQLite-adatbázis a projekt gyökerében; magyar nyelv, Europe/Budapest időzóna.
-- Django-bejelentkezés és POST-alapú kijelentkezés; munkamenet- és CSRF-kezelés.
-- A [urls.py](urls.py) kapcsolja össze a belépést, az adminfelületet és az edzésmodult.
-- Alapesetben helyi fejlesztői mód, csak localhost hosztnevekkel. A titkos kulcs környezeti változóból vagy helyi, Gitből kizárt fájlból jön.
+- [settings.py](settings.py) loads the settings from [configuration.py](configuration.py).
+- SQLite database in the project root; Hungarian language, Europe/Budapest time zone.
+- Django login and POST-based logout; session and CSRF handling.
+- [urls.py](urls.py) wires together login, the admin site and the app modules.
+- Local development mode by default, accepting localhost host names only. The secret key comes from an environment variable or from a local, Git-ignored file.
 
-**Nincs kész:** éles telepítési konfiguráció, sportolói szerepkör, önkiszolgáló regisztráció és jelszó-visszaállítás. A README-ben használt `createsuperuser` rendszergazdai jogot is ad; ez fejlesztői kényelmi megoldás, nem a későbbi ügyfélfiók-létrehozás.
+**Not done:** production deployment configuration, athlete role, self-service registration and password reset. The `createsuperuser` command used in the README also grants admin rights; it is a developer convenience, not the future customer account creation.
 
-## Döntések és indokok
+## Decisions and reasoning
 
-| Döntés | Miért? | Következmény / korlát |
+| Decision | Why? | Consequence / limit |
 |---|---|---|
-| Egy Django-alkalmazás | A Python-központú mellékprojektben együtt ad adatkezelést, űrlapot és hitelesítést | Most nincs külön frontend- vagy API-szolgáltatás |
-| SQLite helyben | Külső adatbázis nélkül kipróbálható az első folyamat | PostgreSQL és annak párhuzamos írási viselkedése még nincs ellenőrizve |
-| Django beépített hitelesítése | Nem kell saját jelszó- és munkamenetkezelőt írni | Az erőforrásokhoz való hozzáférést ettől még külön szűrjük |
-| Helyileg generált titkos kulcs | Nincs közösen használt, repóba írt fejlesztői titok | A `.local/` tartalma nem tölthető fel |
-| Éles módhoz kötelező környezeti kulcs | Hiányzó titokkal ne induljon el élesnek szánt konfiguráció | A kapcsoló önmagában nem teszi éles használatra alkalmassá a rendszert |
+| One Django application | In a Python-centred side project it provides data handling, forms and authentication together | No separate frontend or API service for now |
+| SQLite locally | The first workflow can be tried without an external database | PostgreSQL and its concurrent-write behaviour are not verified yet |
+| Django's built-in authentication | No custom password and session handling to write | Access to resources is still filtered separately |
+| Locally generated secret key | No shared development secret committed to the repo | The contents of `.local/` must not be uploaded |
+| Environment key required in non-debug mode | A configuration meant for production must not start without a secret | The switch alone does not make the system production-ready |
+| Europe/Budapest time zone | First users are in Hungary | Revisit after the move to Dublin or when users span time zones |
 
-## Ellenőrzés
+## Verification
 
-A projekt gyökeréből: `uv run python manage.py check`. A belépéshez kötött nézeteket és a CSRF-védelmet a [tesztek](../training/tests.py) ellenőrzik. A helyi bejelentkezési oldal HTTP-válasza ellenőrizve; teljes böngészős használhatósági vizsgálat még nincs dokumentálva.
+From the project root: `uv run python manage.py check`. Login-protected views and CSRF protection are covered by the [tests](../training/tests.py). The local login page's HTTP response has been checked; a full browser usability check is not documented yet.
 
-## Következő lépés
+## Next step
 
-A sportolói hozzáférés előtt külön szerep- és jogosultságmodell kell. Külső telepítés előtt külön konfiguráció, mentés-visszaállítás, titokkezelés és üzemeltetési felülvizsgálat szükséges.
+Before athletes get access, a separate role and permission model is needed. Before any external deployment, a separate configuration, backup and restore, secret management and an operational review are required.

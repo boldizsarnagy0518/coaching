@@ -1,20 +1,21 @@
-# Validációs munkalap
+# Validation worksheet
 
-Állapot: kitöltendő, nem elvégzett kutatás. A személyes adatokat tartalmazó példányt a Git által kizárt `private/` mappában tartsd.
+Status: to be filled in; this is not completed research. Keep any copy containing personal data in the Git-ignored `private/` folder.
 
-## Edzői interjú
+## Coach interview
 
-- Pszeudonim résztvevőazonosító, dátum:
-- Jelenlegi eszközök és sportolószám:
-- Legutóbbi konkrét tervmódosítás:
-- Mi váltotta ki, milyen adat kellett hozzá?
-- Mi volt benne a legtöbb munka?
-- Milyen hibát nem fogadna el?
-- Vállal-e következő konkrét próbát? Milyen feltétellel?
+- Pseudonymous participant ID, date:
+- Current tools and number of athletes:
+- Most recent concrete plan adjustment:
+- What triggered it, and what data was needed?
+- What took the most work?
+- What mistake would they never accept?
+- Have they ever had to search for, or forgotten, something about an athlete's history (pain, technique issue, earlier decision)? How often?
+- Would they commit to a concrete next trial? Under what conditions?
 
-## Kézi módosítás mérése
+## Measuring a manual adjustment
 
-| Eset | Edzőazonosító | Helyzet | Teljes idő, perc | Havi előfordulás becslése | Megjegyzés |
+| Case | Coach ID | Situation | Total time, minutes | Estimated monthly frequency | Note |
 |---|---|---|---|---|---|
 | 1 | | | | | |
 | 2 | | | | | |
@@ -22,20 +23,20 @@
 | 4 | | | | | |
 | 5 | | | | | |
 
-A kérés megnyitásától a kiadható tervig mérj, visszakereséssel, ellenőrzéssel és tájékoztatással együtt.
+Measure from opening the request until the plan is ready to hand out, including looking things up, checking and informing the athlete.
 
-## Versenytárspróba
+## Competitor trial
 
-| Termék | Kimaradt/áthelyezett edzés | Részleges teljesítés | Fogásváltozat cseréje | Tényleges próba bizonyítéka |
+| Product | Missed/moved session | Partial completion | Competition-variant swap | Evidence of an actual trial |
 |---|---|---|---|---|
 | Kaizer | | | | |
-| Másik alternatíva | | | | |
+| Other alternative | | | | |
 
-## Kapudöntés
+## Gate decision
 
-- Két független külső edző és vállalt következő próba: ismeretlen.
-- Legalább 10 perces medián és érintett edzőnként havi legalább 5 előfordulás: ismeretlen.
-- Legalább egy dokumentált megkülönböztető előny a kipróbált alternatívával szemben: ismeretlen.
-- Döntés és bizonyíték: nincs még rögzítve.
+- Two independent external coaches with a committed next trial: unknown.
+- Median of at least 10 minutes and at least 5 occurrences per month per affected coach: unknown.
+- At least one documented differentiating advantage over the alternative tried: unknown.
+- Decision and evidence: not yet recorded.
 
-A célértékek az ütemterv hipotézisei. Ne pipáld ki őket a prototípus elkészülése alapján.
+The target values are hypotheses from the schedule. Do not tick them off just because the prototype exists.

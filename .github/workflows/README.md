@@ -1,32 +1,32 @@
-# Automatikus ellenőrzés
+# Automated checks
 
-[Projektáttekintés](../../README.md) · Frissítve: 2026. október 17.
+[Project overview](../../README.md) · Updated: 17 October 2026
 
-## Felelősség
+## Responsibility
 
-A [tests.yml](tests.yml) GitHub Actions-folyamat push és pull request eseményre ellenőrzi a projektet.
+The [tests.yml](tests.yml) GitHub Actions workflow checks the project on push and pull request events.
 
-## Aktuális állapot
+## Current state
 
-Ubuntu futtatókörnyezet, Python 3.12, rögzített uv 0.8.14. A folyamat a lockfájlból telepít, futtatja a Django rendszerellenőrzést, a hiányzó migráció ellenőrzését és a teszteket. GitHub-jogosultsága csak `contents: read`; nincs telepítési lépés.
+Ubuntu runner, Python 3.12, pinned uv 0.8.14. The workflow installs from the lockfile and runs the Django system check, the missing-migration check and the tests. Its GitHub permission is `contents: read` only; there is no deployment step.
 
-**Bizonyíték:** a legutóbbi helyi futtatásban 26 teszt sikeres, a Django-ellenőrzés hibamentes. Az adatátadás nem módosította az adatmodellt. A GitHubon futó konkrét munkafolyamat eredményét külön kell ellenőrizni; a konfiguráció megléte és a helyi siker nem bizonyít távoli CI-sikert.
+**Evidence:** the latest local run passed all tests (the current count is in the [training README](../../training/README.md)) and the Django check reported no issues. The result of the workflow on GitHub has to be checked separately; the existence of the configuration and a local success do not prove a remote CI success.
 
-**Nincs kész:** böngészős E2E-teszt, PostgreSQL-es és több Python-verziós teszt, terhelésmérés, automatikus telepítés.
+**Not done:** browser E2E tests, tests on PostgreSQL and on multiple Python versions, load testing, automatic deployment.
 
-## Döntések és indokok
+## Decisions and reasoning
 
-| Döntés | Miért? | Következmény / korlát |
+| Decision | Why? | Consequence / limit |
 |---|---|---|
-| Lockfájlból telepítés | A függőségek ne változzanak észrevétlenül | Függőségfrissítéskor a lockfájl és a teszt együtt változik |
-| Hiányzó migráció hibának számít | Ne kerüljön fel sémafrissítés nélkül modellváltozás | Az adatmegőrző migráció helyességét külön is vizsgálni kell |
-| Funkcionális és jogosultsági tesztek | A tényleges munkafolyamat és adatelkülönítés az első kockázat | A teljes biztonságot nem igazolják |
-| Nincs automatikus telepítés | A prototípus éles működésre még nincs előkészítve | A push nem publikál webalkalmazást |
+| Install from the lockfile | Dependencies must not change unnoticed | Dependency updates change the lockfile and tests together |
+| A missing migration is a failure | A model change must not be pushed without a schema update | The correctness of data-preserving migrations needs separate review |
+| Functional and permission tests | The real workflow and data isolation are the first risks | They do not prove full security |
+| No automatic deployment | The prototype is not prepared for production | A push does not publish a web application |
 
-## Ellenőrzés
+## Verification
 
-A gyökér [README](../../README.md) tartalmazza a helyi parancsokat. Távoli eredmény: a repó Actions oldalán az adott commit futása. Sikertelen ellenőrzést ne minősíts sikeresnek egy korábbi zöld futás alapján.
+The root [README](../../README.md) lists the local commands. Remote result: the run for the given commit on the repository's Actions page. Never treat a failed check as passing because of an earlier green run.
 
-## Következő lépés
+## Next step
 
-Tervverziózáskor regressziós teszt a múltbeli teljesítés megőrzésére és az elavult jóváhagyás elutasítására. PostgreSQL bevezetésekor azon is szükséges tesztelni.
+With plan versioning: regression tests that past performance is kept and stale approvals are rejected. When PostgreSQL is introduced, tests must run on it too.

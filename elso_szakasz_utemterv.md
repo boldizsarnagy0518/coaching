@@ -1,328 +1,328 @@
-# Erőemelő AI-alkalmazás – az első szakasz ütemterve (mellékprojekt)
+# Powerlifting AI App – Phase One Schedule (side project)
 
-Készült: 2026. október 17. **Verzió: 2.0** – mellékprojekt-tempóra és a dublini költözésre átdolgozva.
+Prepared: 17 October 2026. **Version: 2.0** – revised for a side-project pace and the move to Dublin.
 
-Kapcsolódó dokumentum: [Kutatás és megvalósítási terv](eroemelo_ai_kutatas_es_terv.md), különösen a 3.4., 4.1. és a 12–16. fejezet.
+Related document: [Research and implementation plan](eroemelo_ai_kutatas_es_terv.md), especially sections 3.4, 4.1 and 12–16.
 
-**Mi változott az 1.0-hoz képest?** A heti 25 óra helyett heti 10 + 2 órával tervez. Az interjúk és a kézi próbák a költözés elé kerültek. A 2. heti kapu helyére egy olyan validációs kapu lépett, amely a Kaizer kipróbálását és a kézi módosítás mért idejét is vizsgálja. A fejlesztési szakasz 3 hétről (kb. 60 óra) 8 hétre (kb. 80 óra) bővült, az AI-rész pedig külön szakaszba került. Az első belső próba így a 8. hét helyett a 17. munkahéten várható.
+**What changed compared with 1.0?** Instead of 25 hours per week, the plan assumes 10 + 2 hours per week. The interviews and manual trials have been moved before the move. The week-2 gate has been replaced by a validation gate that also examines a trial of Kaizer and the measured time of manual adjustments. The development phase has grown from 3 weeks (about 60 hours) to 8 weeks (about 80 hours), and the AI part has been moved into a separate phase. As a result, the first internal trial is expected in work week 17 instead of week 8.
 
-## 1. Cél és tervezési feltételezések
+## 1. Goal and planning assumptions
 
-**Az első szakasz végén elérendő eredmény:** belső használatra alkalmas prototípus. Tárolja a meglévő tervet és a tényleges edzésnaplót, és egy kimaradt vagy áthelyezett edzésre ellenőrizhető módosítást javasol. Az edző a változtatást elfogadhatja vagy elutasíthatja; a sportoló a jóváhagyott tervet látja. Emellett legyen dokumentált külső érdeklődés, mért kézi módosítási idő, versenytársteszt és teszteset-készlet.
+**Outcome to reach by the end of phase one:** a prototype fit for internal use. It stores the existing plan and the actual training log, and proposes a verifiable adjustment for a missed or rescheduled session. The coach can accept or reject the change; the athlete sees the approved plan. In addition, there should be documented external interest, a measured manual adjustment time, a competitor test and a set of test cases.
 
-A fizetős külső pilot ezen a szakaszon kívül esik. A szakasz eredménye nem kész nyilvános szolgáltatás.
+A paid external pilot falls outside this phase. The outcome of this phase is not a finished public service.
 
-### Kapacitás
+### Capacity
 
-- Egy fejlesztővel, a te edzői közreműködéseddel számolunk; a projekt mellékprojekt.
-- Heti **10 óra konkrét feladat + 2 óra tartalék**, összesen legfeljebb 12 óra.
-- 17 munkahét: **170 óra tervezett feladat + 34 óra tartalék ≈ 204 óra**.
-- A fő terv 240–400 órás becsléséből ez a belső próbáig tartó rész. A külső pilot előkészítése és lebonyolítása ezután további munka.
-- Az interjúalanyok ideje nincs a fejlesztői órákba számolva; a szervezés és a részvételed igen.
-- A technikai jártasságod, különösen a frontend és a hitelesítés terén, még nem ismert. Ezért a fejlesztési órák becslése a legbizonytalanabb rész.
+- We assume one developer, with your involvement as a coach; the project is a side project.
+- **10 hours of concrete tasks + 2 hours of buffer** per week, at most 12 hours in total.
+- 17 work weeks: **170 hours of planned tasks + 34 hours of buffer ≈ 204 hours**.
+- Of the main plan's 240–400 hour estimate, this is the portion up to the internal trial. Preparing and running the external pilot is further work after that.
+- Interviewees' time is not counted in the developer hours; the organising and your participation are.
+- Your technical proficiency, especially in frontend and authentication, is not yet known. That is why the development hour estimates are the most uncertain part.
 
-| Tényleges heti kapacitás | A 204 órás keret naptári megfelelője, költözési szünet nélkül |
+| Actual weekly capacity | Calendar equivalent of the 204-hour budget, without a break for the move |
 |---|---|
-| 12 óra | 17 hét |
-| 8 óra | Körülbelül 26 hét |
-| 20 óra | Körülbelül 10 hét |
+| 12 hours | 17 weeks |
+| 8 hours | About 26 weeks |
+| 20 hours | About 10 weeks |
 
-Kisebb kapacitásnál ugyanazokat a munkacsomagokat oszd több hétre, de a sorrendet tartsd meg. A tartalékot hibákra, tanulásra és csúszásra tartsd fenn; ne töltsd fel előre új funkciókkal.
+With lower capacity, spread the same work packages over more weeks, but keep the order. Reserve the buffer for bugs, learning and slippage; do not fill it in advance with new features.
 
-### A költözés kezelése
+### Handling the move
 
-A költözés pontos ideje még nincs rögzítve, ezért relatív hetekkel számolok.
+The exact timing of the move is not fixed yet, so I am working with relative weeks.
 
-- **A szakasz (1–5. hét) a költözés előtt, Magyarországon legyen.** Ide tartoznak a személyes interjúk, az időmérés, a kézi próbák és a saját sportolóiddal végzett egyeztetés. **Legkésőbb a validációs kapu (3. hét vége) teljesüljön a költözés előtt.** Ha ez nem fér bele, a 4–5. hét feladatai távolról is elvégezhetők.
-- **A költözés körül 2–4 hét szünetet tervezz**, munkaórák nélkül. Ha ekkor is haladsz, az ajándék, nem elvárás.
-- **A B és C szakasz (6–17. hét) helytől független.** A sportolói és edzői próbák ekkor már távolról, videóhívással vagy rövid használati teszttel zajlanak.
-- **Indulás:** a 0. hét legalább 7 héttel a költözés előtt kezdődjön, hogy az A szakasz és egy hét ráhagyás beleférjen.
+- **Phase A (weeks 1–5) should take place before the move, in Hungary.** This includes the in-person interviews, the time measurement, the manual trials and the consultation with your own athletes. **At the latest, the validation gate (end of week 3) should be passed before the move.** If that does not fit, the tasks of weeks 4–5 can also be done remotely.
+- **Plan a 2–4 week break around the move**, with no work hours. If you still make progress then, it is a bonus, not an expectation.
+- **Phases B and C (weeks 6–17) are location-independent.** By then, the athlete and coach trials take place remotely, via video call or a short usability test.
+- **Start:** week 0 should begin at least 7 weeks before the move, so that phase A and one week of margin fit in.
 
-## 2. Áttekintő ütemezés
+## 2. Schedule overview
 
-| Hét | Szakasz | Fókusz | Heti kézzelfogható eredmény |
+| Week | Phase | Focus | Tangible weekly outcome |
 |---|---|---|---|
-| 0. | Előkészítés | Megkeresés | Legalább 8 edzői és 6 sportolói megkeresés, időpontok |
-| 1. | A – Validáció (Magyarországon) | Probléma | Termékleírás, 10 saját eset, első 3 edzői interjú |
-| 2. | A | Időmérés | További interjúk, legalább 5 mért kézi módosítás |
-| 3. | A | Versenytárs és kapu | Kaizer és egy további alternatíva tesztje, **validációs kapu** |
-| 4. | A | Szakmai logika | Szabálykatalógus, 20 részletes eset |
-| 5. | A | Kézi folyamat | 5 eset kézi végigjátszása, külső véleményezés, adatséma-vázlat |
-| — | Költözés | Szünet | 2–4 hét, tervezett munka nélkül |
-| 6. | B – Technikai alap | Technikai próba | Egy sportoló teljes adatútja, **technikai kapu** |
-| 7–8. | B | Adatbázis és hozzáférés | Tervverziók, edző–sportoló jogosultság |
-| 9–10. | B | Naplózás és import | Mobilos napló, CSV-import/export, részleges edzés |
-| 11. | B | Használati próba | Két távoli használati próba, hibajavítás, 30 eset |
-| 12–14. | B | Tervmódosítás | Szabályalapú javaslat, előtte/utána nézet, jóváhagyás |
-| 15–16. | C – AI és belső próba | Korlátozott AI | Szabad szöveges kérés strukturálása, két edzői próba |
-| 17. | C | Lezárás | Hibajavítás, 50 eset, **belső próba kapu**, újrabecslés |
+| 0 | Preparation | Outreach | At least 8 coach and 6 athlete contacts, appointments |
+| 1 | A – Validation (in Hungary) | Problem | Product brief, 10 own cases, first 3 coach interviews |
+| 2 | A | Time measurement | Further interviews, at least 5 measured manual adjustments |
+| 3 | A | Competitor and gate | Test of Kaizer and one further alternative, **validation gate** |
+| 4 | A | Coaching logic | Rule catalogue, 20 detailed cases |
+| 5 | A | Manual process | Manual walk-through of 5 cases, external review, draft data schema |
+| — | The move | Break | 2–4 weeks, no planned work |
+| 6 | B – Technical foundation | Technical spike | One athlete's complete data path, **technical gate** |
+| 7–8 | B | Database and access | Plan versions, coach–athlete permissions |
+| 9–10 | B | Logging and import | Mobile log, CSV import/export, partial session |
+| 11 | B | Usability trial | Two remote usability trials, bug fixing, 30 cases |
+| 12–14 | B | Plan adjustment | Rule-based proposal, before/after view, approval |
+| 15–16 | C – AI and internal trial | Limited AI | Structuring free-text requests, two coach trials |
+| 17 | C | Wrap-up | Bug fixing, 50 cases, **internal trial gate**, re-estimation |
 
-**A sorrend indoka:** először azt ellenőrizzük, hogy a módosítási folyamat értékes és időigényes-e, és hogy a legközelebbi konkurens nem oldja-e már meg. Utána rögzítjük a szakmai szabályokat és az adatokat. Az AI a már ellenőrizhető folyamatba kapcsolódik be. Így külön látható, hogy egy hiba adatkezelésből, szabályból vagy nyelvi értelmezésből ered.
+**Rationale for the order:** first we check whether the adjustment process is valuable and time-consuming, and whether the closest competitor does not already solve it. Then we pin down the coaching rules and the data. The AI plugs into a process that can already be verified. This way it is clear whether an error stems from data handling, a rule or language interpretation.
 
-## 3. Heti feladatok és elfogadási feltételek
+## 3. Weekly tasks and acceptance criteria
 
-### 0. hét – Megkeresés (kb. 3 óra, a keretbe nem számítva)
+### Week 0 – Outreach (about 3 hours, not counted in the budget)
 
-Írj legalább 8 edzőnek és 6 sportolónak, rögzített időpontkéréssel. Ne csak saját ügyfeleket keress meg: legalább 4 edző legyen tőled független. A kiinduló lista lehet a fő terv 4.2. fejezetében leírt saját edzői táblázat első sora.
+Write to at least 8 coaches and 6 athletes, asking for a specific appointment. Do not contact only your own clients: at least 4 coaches should be independent of you. The starting list can be the first row of your own coach table described in section 4.2 of the main plan.
 
-### A szakasz – Validáció a költözés előtt
+### Phase A – Validation before the move
 
-#### 1. hét – A probléma pontosítása
+#### Week 1 – Clarifying the problem
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Egyoldalas termékleírás: célcsoport, változási helyzet, elvárt eredmény | 2 óra |
-| Interjúvázlat, jegyzet- és időmérési sablon | 2 óra |
-| 10 saját, személyazonosításra nem alkalmas eset leírása | 3 óra |
-| Első 3 edzői interjú, közvetlen jegyzetekkel | 3 óra |
-| **Összesen + tartalék** | **10 + 2 óra** |
+| One-page product brief: target group, change situation, expected outcome | 2 hours |
+| Interview outline, note-taking and time-measurement template | 2 hours |
+| Writing up 10 of your own cases, in a form that does not allow personal identification | 3 hours |
+| First 3 coach interviews, with notes taken directly | 3 hours |
+| **Total + buffer** | **10 + 2 hours** |
 
-**Elkészül:** termékleírás, 10 eset (eredeti terv, mi változott, milyen döntést hoztál, miért), 3 interjújegyzet.
+**Deliverables:** product brief, 10 cases (original plan, what changed, what decision you made, why), 3 sets of interview notes.
 
-**A hét akkor kész, ha:** meg tudod nevezni az első támogatott helyzetet, például „kimaradt egy edzés, és más napokon tud edzeni a sportoló”. A problémát legalább egy külső edző saját történetében is felismered.
+**The week is done when:** you can name the first supported situation, for example "a session was missed, and the athlete can train on other days". You also recognise the problem in at least one external coach's own story.
 
-#### 2. hét – Interjúk és időmérés
+#### Week 2 – Interviews and time measurement
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| További 3 edzői és 3 sportolói interjú | 6 óra |
-| Legalább 5 kézi tervmódosítás teljes idejének mérése (saját és külső edzőknél) | 3 óra |
-| Visszatérő problémák és ellenérvek összesítése | 1 óra |
-| **Összesen + tartalék** | **10 + 2 óra** |
+| A further 3 coach and 3 athlete interviews | 6 hours |
+| Measuring the full time of at least 5 manual plan adjustments (with yourself and external coaches) | 3 hours |
+| Summarising recurring problems and objections | 1 hour |
+| **Total + buffer** | **10 + 2 hours** |
 
-**Az időmérés módja:** a módosítási igény megnyitásától a sportolónak kiadható, ellenőrzött tervig tart. Beleszámít a visszakeresés, az ellenőrzés és a sportoló tájékoztatása is. Minden esetnél rögzítsd az edzőt, a helyzettípust, a percet és azt, hogy havonta nagyjából hányszor fordul elő ilyen eset.
+**How to measure time:** from opening the adjustment request until a verified plan that can be handed to the athlete. Looking things up, checking and informing the athlete are included. For each case, record the coach, the type of situation, the minutes, and roughly how many times per month such a case occurs.
 
-**Elkészül:** 6 edzői és 3 sportolói interjú összesítése; legalább 5 mért kézi módosítás.
+**Deliverables:** a summary of 6 coach and 3 athlete interviews; at least 5 measured manual adjustments.
 
-#### 3. hét – Versenytársteszt és validációs kapu
+#### Week 3 – Competitor test and validation gate
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| A Kaizer kipróbálása 3 azonos erőemelő esettel | 3 óra |
-| Egy további alternatíva (pl. RTS Training Lab vagy a jelenlegi táblázatos módszer) ugyanazon eseteken | 2 óra |
-| Egyszerű bemutató egy régi és egy módosított tervvel | 2 óra |
-| Pilotajánlat-vázlat és konkrét következő próba felajánlása | 2 óra |
-| Döntési jegyzet a kapuhoz | 1 óra |
-| **Összesen + tartalék** | **10 + 2 óra** |
+| Trying out Kaizer with the same 3 powerlifting cases | 3 hours |
+| One further alternative (e.g. RTS Training Lab or the current spreadsheet method) on the same cases | 2 hours |
+| Simple demo with an old and an adjusted plan | 2 hours |
+| Draft pilot offer and offering a concrete next trial | 2 hours |
+| Decision note for the gate | 1 hour |
+| **Total + buffer** | **10 + 2 hours** |
 
-**A versenytársteszt esetei:** (1) kimaradt edzés, és a sportoló más napon tud edzeni; (2) részben elvégzett edzés; (3) versenyfogás-változat cseréje, például szünetes helyett érintéses fekvenyomás. A 3.3. fejezet értékelési lapját használd. Ha egy terméket nem tudsz ténylegesen használni, ezt jelöld; a dokumentáció olvasása nem használati teszt.
+**Competitor test cases:** (1) a missed session, and the athlete can train on another day; (2) a partially completed session; (3) swapping a competition-lift variation, for example touch-and-go bench press instead of paused. Use the evaluation sheet from section 3.3. If you cannot actually use a product, mark this; reading the documentation is not a usability test.
 
-**Validációs kapu – mindhárom feltételnek teljesülnie kell** (saját célküszöb, a mérés után finomítható):
+**Validation gate – all three conditions must be met** (own target thresholds, can be refined after measurement):
 
-1. **Kereslet:** legalább 2 egymástól független külső edző mutat hasonló problémát, és vállal konkrét következő próbát.
-2. **Időigény:** a mért kézi módosítások mediánja **legalább 10 perc**, és az érintett edzőknél ilyen eset **havonta legalább 5-ször** fordul elő. Indoklás: havi 5 × 10 perc = 50 perc, ennek 30%-a 15 perc. Ennél kisebb időnyereségért nehéz havidíjat kérni.
-3. **Megkülönböztetés:** a Kaizer (vagy a másik alternatíva) a három esetből legalább egyet láthatóan rosszabbul kezel, mint a tervezett folyamat. Ilyen lehet a változatok összekeverése, duplázás, nem átlátható változtatás vagy a terv hiányzó edzői kontrollja. Ezt egy mondatban le is tudod írni.
+1. **Demand:** at least 2 mutually independent external coaches show a similar problem and commit to a concrete next trial.
+2. **Time cost:** the median of the measured manual adjustments is **at least 10 minutes**, and for the coaches concerned such a case occurs **at least 5 times per month**. Rationale: 5 × 10 minutes per month = 50 minutes, 30% of which is 15 minutes. It is hard to charge a monthly fee for a smaller time saving than that.
+3. **Differentiation:** Kaizer (or the other alternative) handles at least one of the three cases visibly worse than the planned process. This could be mixing up variations, duplication, non-transparent changes or a lack of coach control over the plan. You can also describe this in one sentence.
 
-**Ha a kapu nem teljesül:**
+**If the gate is not passed:**
 
-| Hiányzó feltétel | Teendő |
+| Missing condition | Action |
 |---|---|
-| Kereslet | A 4. hét egy részében új problémafeltárás; ne kezdj fejlesztést |
-| Időigény | Fordulj a heti edzői összefoglaló felé (fő terv 5.1.), vagy maradjon saját belső eszköz |
-| Megkülönböztetés | Szűkíts egy olyan erőemelő-specifikus helyzetre, amelyet a konkurens rosszul kezel; ha ilyen nincs, a külső termék irányát állítsd le |
+| Demand | New problem discovery in part of week 4; do not start development |
+| Time cost | Turn towards the weekly coach summary (main plan 5.1), or keep it as your own internal tool |
+| Differentiation | Narrow down to a powerlifting-specific situation that the competitor handles poorly; if there is none, stop the external-product direction |
 
-A kapu teljesülése engedély a további kísérletre, nem a piaci siker igazolása.
+Passing the gate is permission for further experimentation, not proof of market success.
 
-#### 4. hét – Edzői szabályok
+#### Week 4 – Coaching rules
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Döntési szabályok és tiltott automatikus műveletek leírása | 6 óra |
-| Az esetkészlet bővítése 20 részletes példára | 4 óra |
-| **Összesen + tartalék** | **10 + 2 óra** |
+| Writing up decision rules and prohibited automatic operations | 6 hours |
+| Expanding the case set to 20 detailed examples | 4 hours |
+| **Total + buffer** | **10 + 2 hours** |
 
-**Minden szabályhoz kell:** kiváltó esemény, szükséges adat, engedett változtatás, tiltás, tisztázó kérdés és jóváhagyó szerep. Például a részben elvégzett edzésnél a teljesített sorozatok nem helyezhetők át újra elvégzendő munkaként. Különítsd el a közös korlátot és az edző személyes módszertani preferenciáját.
+**Every rule needs:** a triggering event, required data, permitted change, prohibition, clarifying question and approving role. For example, for a partially completed session, completed sets cannot be moved as work to be done again. Separate shared constraints from the coach's personal methodological preferences.
 
-#### 5. hét – Kézi folyamat és átadás a költözés előtt
+#### Week 5 – Manual process and handover before the move
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Legalább 5 eset kézi végigjátszása a javasolt folyamattal | 4 óra |
-| Külső edzői véleményezés és eltérések rögzítése | 2 óra |
-| Adatséma- és szerepkör-vázlat | 2 óra |
-| Költözés előtti lezárás: elérhetőségek, távoli próbákra vállalt résztvevők | 2 óra |
-| **Összesen + tartalék** | **10 + 2 óra** |
+| Manual walk-through of at least 5 cases with the proposed process | 4 hours |
+| External coach review and recording of discrepancies | 2 hours |
+| Draft data schema and roles | 2 hours |
+| Pre-move wrap-up: contact details, participants committed to remote trials | 2 hours |
+| **Total + buffer** | **10 + 2 hours** |
 
-**A hét akkor kész, ha:** öt különböző esetben végig tudod vezetni a változtatást, és meg tudod mondani, melyik lépés automatizálható. Van legalább 2 edző és 2 sportoló, aki vállalja a későbbi távoli használati próbát. A hiányzó adat vagy panaszjelzés felismerése is helyes eredmény lehet; nem minden kérésnek kell új tervvel végződnie.
+**The week is done when:** you can carry the change through in five different cases and can say which step can be automated. There are at least 2 coaches and 2 athletes who commit to the later remote usability trial. Recognising missing data or a complaint report can also be a correct outcome; not every request has to end in a new plan.
 
-### Költözési szünet (2–4 hét)
+### Break for the move (2–4 weeks)
 
-Nincs tervezett munka. Ha mégis jut idő, csak olyat csinálj, amit a későbbi döntések nem tesznek feleslegessé. Ilyen például a választott technológia dokumentációjának olvasása vagy egy szintetikus tesztadat-készlet összeállítása.
+No planned work. If you do find time, only do things that later decisions will not make redundant. Examples include reading the documentation of the chosen technology or putting together a synthetic test data set.
 
-### B szakasz – Technikai alap
+### Phase B – Technical foundation
 
-#### 6. hét – Technikai próba
+#### Week 6 – Technical spike
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Legfeljebb 8 órás technikai próba | 8 óra |
-| Funkciólista, függőségek és következő feladatok véglegesítése | 2 óra |
-| **Összesen + tartalék** | **10 + 2 óra** |
+| Technical spike of at most 8 hours | 8 hours |
+| Finalising the feature list, dependencies and next tasks | 2 hours |
+| **Total + buffer** | **10 + 2 hours** |
 
-**A technikai próba útja:** egy szintetikus sportoló → egy terv → egy naplózott sorozat → adatbázisból visszaolvasott eredmény, telefonról. Egy ismerős Python-megoldást próbálj ki; csak konkrét akadály esetén készíts második változatot.
+**Path of the technical spike:** one synthetic athlete → one plan → one logged set → result read back from the database, on a phone. Try a familiar Python solution; build a second version only if you hit a concrete obstacle.
 
-**Technikai kapu:** megvan a teljes adatút, a támogatott módosítások köre és az elfogadási feltételek. Ha a próba a tartalékkal együtt sem működik, egyszerűsíts felületet vagy technológiát, és **frissítsd a 7–14. hét becslését**, mielőtt továbblépsz.
+**Technical gate:** the complete data path, the scope of supported adjustments and the acceptance criteria are in place. If the spike does not work even with the buffer, simplify the interface or the technology, and **update the estimate for weeks 7–14** before moving on.
 
-#### 7–8. hét – Tárolás, tervverziók és hozzáférés
+#### Weeks 7–8 – Storage, plan versions and access
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Adatbázis alapentitásai és reprodukálható módosításai | 6 óra |
-| Tervverziók és változási előzmények | 4 óra |
-| Belépés és edző–sportoló hozzáférés | 7 óra |
-| Jogosultsági és tervtörténeti ellenőrzések | 3 óra |
-| **Összesen + tartalék (két hét)** | **20 + 4 óra** |
+| Core database entities and reproducible schema changes | 6 hours |
+| Plan versions and change history | 4 hours |
+| Login and coach–athlete access | 7 hours |
+| Permission and plan-history checks | 3 hours |
+| **Total + buffer (two weeks)** | **20 + 4 hours** |
 
-**Elkészül:** edző, sportoló, kapcsolat, gyakorlat, terv és tényleges edzés alapstruktúrája. A terv frissítése új verziót hoz létre; a korábbi teljesítés nem változik meg.
+**Deliverables:** the basic structure of coach, athlete, relationship, exercise, plan and actual session. Updating the plan creates a new version; earlier completed work does not change.
 
-**Akkor kész, ha:** két külön tesztedzővel igazolt, hogy nem olvassák és nem módosítják egymás sportolóit. A háttérrendszer a tiltott kérést is utasítsa el; az eltérő képernyő nem elég. Ez első körös bizonyíték, nem teljes biztonsági audit. Szintetikus adatokkal dolgozz; az éles személyes adatok használatát a fő terv 11. fejezete szerint külön rendezd.
+**Done when:** it has been verified with two separate test coaches that they cannot read or modify each other's athletes. The backend must also reject the forbidden request; a different screen is not enough. This is first-round evidence, not a full security audit. Work with synthetic data; arrange the use of real personal data separately, as described in section 11 of the main plan.
 
-#### 9–10. hét – Naplózás és tervbevitel
+#### Weeks 9–10 – Logging and plan entry
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Telefonra igazított sorozatnaplózás | 8 óra |
-| Részleges edzés, újraküldés és mentési állapot kezelése | 4 óra |
-| Egy dokumentált CSV-importformátum, előnézettel és exporttal | 4 óra |
-| Aktuális terv és tényleges teljesítés megjelenítése | 4 óra |
-| **Összesen + tartalék (két hét)** | **20 + 4 óra** |
+| Phone-optimised set logging | 8 hours |
+| Handling partial sessions, resubmission and save status | 4 hours |
+| One documented CSV import format, with preview and export | 4 hours |
+| Displaying the current plan and actual completed work | 4 hours |
+| **Total + buffer (two weeks)** | **20 + 4 hours** |
 
-**Elkészül:** egy program betölthető, egy edzés naplózható, a mentett adatok újranyitáskor visszajönnek. A felület megkülönbözteti a tervezett, elvégzett, kihagyott és részben elvégzett munkát. Az újraküldés nem dupláz sorozatot; sikertelen mentés nem jelenik meg sikeresként.
+**Deliverables:** a program can be loaded, a session can be logged, and the saved data comes back when reopened. The interface distinguishes planned, completed, skipped and partially completed work. Resubmission does not duplicate sets; a failed save is not shown as successful.
 
-**Ha csúszik:** először az import kényelmi elemeit egyszerűsítsd. A megbízható mentés és a tényleges edzéstörténet maradjon meg.
+**If it slips:** first simplify the convenience features of the import. Reliable saving and the actual training history must stay.
 
-#### 11. hét – Távoli használati próba
+#### Week 11 – Remote usability trial
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Két rövid, távoli használati próba sportolóval (videóhívás, saját telefonján) | 2 óra |
-| A talált hibák javítása | 4 óra |
-| Az esetkészlet bővítése 30 esetre | 4 óra |
-| **Összesen + tartalék** | **10 + 2 óra** |
+| Two short remote usability trials with athletes (video call, on their own phone) | 2 hours |
+| Fixing the bugs found | 4 hours |
+| Expanding the case set to 30 cases | 4 hours |
+| **Total + buffer** | **10 + 2 hours** |
 
-**A hét akkor kész, ha:** a résztvevő folyamatos magyarázat nélkül rögzít egy edzést. A gyorsaságot mérd, de végleges célértéket a próba eredményéből állíts.
+**The week is done when:** the participant records a session without continuous explanation. Measure speed, but set the final target value based on the outcome of the trial.
 
-**Opcionális, a tartalék terhére:** ismerkedés 1–2 dublini erőemelő edzővel vagy terem közösségével. Ez még nem értékesítés, csak a későbbi angol nyelvű piac első tájékozódása.
+**Optional, out of the buffer:** getting to know 1–2 Dublin powerlifting coaches or a gym community. This is not selling yet, just an initial look at the later English-speaking market.
 
-#### 12–14. hét – Szabályalapú módosítás és jóváhagyás
+#### Weeks 12–14 – Rule-based adjustment and approval
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Kimaradás és áthelyezés szabályalapú feldolgozása | 10 óra |
-| Javaslat, jóváhagyás és új tervverzió kezelése | 7 óra |
-| Előtte/utána nézet és a ténylegesen alkalmazott szabályból készült indoklás | 7 óra |
-| Alapfolyamatok, verzióütközés és 5 referenciahelyzet ellenőrzése | 6 óra |
-| **Összesen + tartalék (három hét)** | **30 + 6 óra** |
+| Rule-based processing of missed and rescheduled sessions | 10 hours |
+| Handling the proposal, approval and new plan version | 7 hours |
+| Before/after view and an explanation generated from the rule actually applied | 7 hours |
+| Checking the core flows, version conflicts and 5 reference situations | 6 hours |
+| **Total + buffer (three weeks)** | **30 + 6 hours** |
 
-**Elkészül:** strukturált kérésből konkrét, ellenőrizhető javaslat. A jóváhagyás után megjelenik az új terv; elutasításkor a jóváhagyott terv változatlanul elérhető.
+**Deliverables:** a concrete, verifiable proposal from a structured request. After approval, the new plan appears; on rejection, the approved plan remains available unchanged.
 
-**Akkor kész, ha:** legalább öt referenciahelyzet működik; nincs már teljesített sorozat automatikus duplázása; egy időközben megváltozott tervre érkező régi jóváhagyás új ellenőrzést kér. A szakmai korlát megsértése blokkolja a javaslat kiadását.
+**Done when:** at least five reference situations work; there is no automatic duplication of already completed sets; an old approval arriving for a plan that has changed in the meantime triggers a new check. Violating a coaching constraint blocks the proposal from being issued.
 
-A 3→4 napos teljes áttervezés és a gyakorlatcsere a következő szakaszra marad.
+Full 3→4-day replanning and exercise substitution are left for the next phase.
 
-### C szakasz – Korlátozott AI és belső próba
+### Phase C – Limited AI and internal trial
 
-#### 15–16. hét – AI-értelmezés és edzői próba
+#### Weeks 15–16 – AI interpretation and coach trial
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| Szabad szöveges kérés strukturálása és rövid magyarázat | 6 óra |
-| AI-kimenet ellenőrzése, visszakérdezés és hibakezelés | 6 óra |
-| Két felügyelt, távoli edzői használati próba | 4 óra |
-| Idő-, költség- és javítási adatok összesítése | 4 óra |
-| **Összesen + tartalék (két hét)** | **20 + 4 óra** |
+| Structuring free-text requests and a short explanation | 6 hours |
+| Validating AI output, follow-up questions and error handling | 6 hours |
+| Two supervised, remote coach usability trials | 4 hours |
+| Summarising time, cost and correction data | 4 hours |
+| **Total + buffer (two weeks)** | **20 + 4 hours** |
 
-**Elkészül:** például a „péntek helyett vasárnap tudok edzeni” mondatból strukturált kérés lesz. A rendszer a meglévő szabályfolyamatot használja, és megmutatja, hogyan értette a kérést. Bizonytalan dátum vagy hiányzó adat esetén visszakérdez. A modell önmagában nem írhatja át a jóváhagyott tervet.
+**Deliverables:** for example, the sentence "I can train on Sunday instead of Friday" becomes a structured request. The system uses the existing rule process and shows how it understood the request. If a date is ambiguous or data is missing, it asks a follow-up question. The model on its own cannot rewrite the approved plan.
 
-Az API-integráció előtt legyen szerveroldali titokkezelés, beállított költségkeret és rendezett tesztadat-használat. Ha ezek hiányoznak, a folyamat helyettesítő válaszokkal tesztelhető; az AI-rész ilyenkor még nem tekinthető elkészültnek.
+Before the API integration, there must be server-side secret management, a configured cost limit and orderly use of test data. If these are missing, the process can be tested with stub responses; in that case the AI part cannot yet be considered complete.
 
-**Az időmérés összevetése:** a két edzői próbában ugyanúgy mérd a módosítás teljes idejét, mint a 2. héten. Ez az első összehasonlítás a kézi alappal. A kis minta miatt jelzésértékű, nem bizonyíték.
+**Comparing the time measurements:** in the two coach trials, measure the full time of the adjustment in the same way as in week 2. This is the first comparison with the manual baseline. Because of the small sample, it is indicative, not proof.
 
-#### 17. hét – Lezárás és belső próba kapu
+#### Week 17 – Wrap-up and internal trial gate
 
-| Feladat | Tervezett idő |
+| Task | Planned time |
 |---|---|
-| A legsúlyosabb hibák javítása | 5 óra |
-| Az esetkészlet kiegészítése 50 esetre (35 fejlesztési, 15 elkülönített) | 3 óra |
-| A következő szakasz újrabecslése és döntési jegyzet | 2 óra |
-| **Összesen + tartalék** | **10 + 2 óra** |
+| Fixing the most serious bugs | 5 hours |
+| Extending the case set to 50 cases (35 development, 15 held out) | 3 hours |
+| Re-estimating the next phase and a decision note | 2 hours |
+| **Total + buffer** | **10 + 2 hours** |
 
-**Belső próba kapu:** működik a teljes folyamat; a módosítás teljes ideje rövidebb, mint a 2. heti kézi alap; nincs ismert, nyitott kritikus hozzáférési vagy tiltott módosítási hiba. A kis próba nem igazolja a sportteljesítményre gyakorolt hatást vagy a hosszú távú megtartást.
+**Internal trial gate:** the complete process works; the full time of an adjustment is shorter than the week-2 manual baseline; there is no known, open critical access or forbidden-modification bug. The small trial does not prove an effect on athletic performance or long-term retention.
 
-Ha az AI nem ad érdemi értéket a strukturált űrlaphoz képest, a következő szakaszban a működő naplózást és módosítási folyamatot fejleszd tovább. Az AI minőségjavítása külön feladatként maradjon látható.
+If the AI does not add meaningful value compared with the structured form, develop the working logging and adjustment process further in the next phase. Keep AI quality improvement visible as a separate task.
 
-## 4. Heti munkaritmus
+## 4. Weekly work rhythm
 
-| Munkablokk | Idő | Tartalom |
+| Work block | Time | Content |
 |---|---|---|
-| Hétindítás | 0,5 óra | Egy heti eredmény, konkrét feladatok és akadályok |
-| Két–három fókuszblokk | 8,5 óra | A heti táblázat szerinti interjú, tervezés vagy fejlesztés |
-| Ellenőrzés és heti lezárás | 1 óra | Végigpróbálás, elkészült/nem készült el, tényleges órák |
-| Tartalék | 2 óra | Csúszás, váratlan hiba, tanulás |
+| Week kick-off | 0.5 hours | One weekly outcome, concrete tasks and obstacles |
+| Two to three focus blocks | 8.5 hours | Interviews, planning or development according to the weekly table |
+| Review and weekly wrap-up | 1 hour | Walk-through, done/not done, actual hours |
+| Buffer | 2 hours | Slippage, unexpected bugs, learning |
 
-Ez ugyanannak a heti 10 + 2 órának egy lehetséges elosztása; a tervezés és az ellenőrzés nem plusz idő. A fókuszblokk legyen legalább 3 óra, mert a fejlesztésnél a rövid, széttördelt idő sokat veszít a hatékonyságából.
+This is one possible split of the same 10 + 2 hours per week; planning and review are not extra time. A focus block should be at least 3 hours, because in development short, fragmented time loses a lot of its efficiency.
 
-Egyszerre egy fő munkacsomag legyen folyamatban.
+Only one main work package should be in progress at a time.
 
-### Rövid heti napló
+### Short weekly log
 
 ```text
-Hét:
-Heti cél:
-Elkészült eredmény / elérési hely:
-Elfogadási feltétel teljesült? Milyen bizonyítékkal?
-Tervezett / tényleges órák:
-Felhasznált tartalék:
-Külső visszajelzés:
-Nyitott hibák és akadályok:
-Döntés: folytatás / szűkítés / ismételt próba
-Következő hét egy fő eredménye:
+Week:
+Weekly goal:
+Completed outcome / location:
+Acceptance criterion met? With what evidence?
+Planned / actual hours:
+Buffer used:
+External feedback:
+Open bugs and obstacles:
+Decision: continue / narrow down / retry
+One main outcome for next week:
 ```
 
-## 5. Csúszáskezelés
+## 5. Handling slippage
 
-| Helyzet | Teendő |
+| Situation | Action |
 |---|---|
-| Egy feladat néhány órát csúszik | A heti tartalékot használd, és írd fel az okot |
-| Két héten át elfogy a teljes tartalék | Becsüld újra a hátralévő feladatokat; ne tekintsd változatlannak a 17. heti határidőt |
-| A költözésig nem fér bele a validációs kapu | A kaput ne hagyd ki: a hiányzó interjúkat távolról pótold, és addig ne kezdj fejlesztést |
-| A költözés után hetekig nincs kapacitás | Hosszabbítsd a szünetet; a tervet heti órák, nem naptári dátumok szerint folytasd |
-| Interjúalany nem ér rá | Haladj saját esetekkel, de a keresleti feltételt hagyd nyitva |
-| Frontend több munkát igényel | Egyszerűsíts elrendezést és kényelmi funkciót; a mentési állapot maradjon egyértelmű |
-| Túl sokféle edzői módszer kerül elő | Egy kiválasztott célprofilra és beállításkészletre szűkíts |
-| Jogosultsági vagy tiltott módosítási hiba van | A javítás előzze meg a bővítést és a külső adat használatát |
-| Nincs érzékelhető időnyereség | Vizsgáld az adatbevitelt és az ellenőrzési terhet; ne több AI-funkcióval próbáld elfedni |
+| A task slips by a few hours | Use the weekly buffer and write down the reason |
+| The full buffer is used up for two weeks in a row | Re-estimate the remaining tasks; do not treat the week-17 deadline as unchanged |
+| The validation gate does not fit in before the move | Do not skip the gate: make up the missing interviews remotely, and do not start development until then |
+| No capacity for weeks after the move | Extend the break; continue the plan by weekly hours, not calendar dates |
+| An interviewee is unavailable | Proceed with your own cases, but leave the demand condition open |
+| Frontend needs more work | Simplify the layout and convenience features; save status must stay unambiguous |
+| Too many different coaching methods come up | Narrow down to one chosen target profile and set of settings |
+| There is a permission or forbidden-modification bug | Fixing it comes before expansion and before using external data |
+| No noticeable time saving | Examine data entry and the review burden; do not try to cover it up with more AI features |
 
-**Először elhagyható:** részletes grafikonok, több importformátum, megjelenési finomítások, extra AI-beszélgetés, további módosítási helyzetek. **Megőrzendő alap:** helyes naplózás, jogosultság, tervverzió, szakmai korlát és jóváhagyás.
+**Can be dropped first:** detailed charts, multiple import formats, visual polish, extra AI conversation, additional adjustment situations. **Core to preserve:** correct logging, permissions, plan versions, coaching constraints and approval.
 
-## 6. A szakasz lezárásának ellenőrzőlistája
+## 6. Phase completion checklist
 
-- [ ] Dokumentáltuk, kinek és milyen konkrét helyzetben hasznos az eszköz.
-- [ ] A validációs kapu mindhárom feltétele (kereslet, időigény, megkülönböztetés) teljesült, bizonyítékkal.
-- [ ] Megvan a Kaizer és egy további alternatíva tesztjének értékelési lapja.
-- [ ] Van legalább 5 mért kézi módosítási idő, és ehhez összevetett asszisztált idő.
-- [ ] Megvan a szabálykatalógus és az 50 esetből álló induló készlet.
-- [ ] Egy program importálható, és a tényleges teljesítés naplózható.
-- [ ] Az elkülönített edzői fiókok hozzáférése ellenőrzött.
-- [ ] A kimaradás és áthelyezés javaslata összevethető a régi tervvel.
-- [ ] A jóváhagyás új tervverziót hoz létre, a múltbeli teljesítés megőrzésével.
-- [ ] Az AI-kimenetet a rendszer ellenőrzi; hiba esetén a naplózás tovább működik.
-- [ ] Nincs ismert, nyitott kritikus hiba a támogatott folyamatban.
-- [ ] A következő szakasz (gyakoriságváltás, gyakorlatcsere, mentés-visszaállítás, külső pilot előkészítése) a próba eredménye alapján újrabecsülve.
+- [ ] We have documented for whom, and in what concrete situation, the tool is useful.
+- [ ] All three conditions of the validation gate (demand, time cost, differentiation) have been met, with evidence.
+- [ ] The evaluation sheet for the test of Kaizer and one further alternative is available.
+- [ ] There are at least 5 measured manual adjustment times, with assisted times compared against them.
+- [ ] The rule catalogue and the initial set of 50 cases are available.
+- [ ] A program can be imported, and actual completed work can be logged.
+- [ ] Access for separate coach accounts has been verified.
+- [ ] The proposal for missed and rescheduled sessions can be compared with the old plan.
+- [ ] Approval creates a new plan version, preserving past completed work.
+- [ ] The system validates AI output; in case of an error, logging continues to work.
+- [ ] There is no known, open critical bug in the supported process.
+- [ ] The next phase (frequency change, exercise substitution, backup and restore, external pilot preparation) has been re-estimated based on the outcome of the trial.
 
-## 7. Kapcsolat a kutatással
+## 7. Link to the research
 
-Ez az ütemterv a meglévő kutatási anyag végrehajtási bontása. Nem tartalmaz új piaci árakat vagy hatásossági állításokat; a szakmai és technológiai indoklások forrásai a fő dokumentumban találhatók.
+This schedule is an execution breakdown of the existing research material. It does not contain new market prices or efficacy claims; the sources for the coaching and technological rationale can be found in the main document.
 
-| Ütemezési döntés | Indoklás helye a fő tervben |
+| Scheduling decision | Where the rationale is in the main plan |
 |---|---|
-| Edzői indulás és külső interjú | 4. és 13. fejezet |
-| Időmérés mint kritikus feltevés | 4.1. és 15. fejezet |
-| Kaizer-teszt és megkülönböztetés | 3.3. és 3.4. fejezet |
-| Szabályok, hiányzó adat és felülvizsgálat | 6–7. fejezet |
-| Adatbázis, verziók és AI-feladatmegosztás | 8–9. fejezet |
-| Adatkezelés és funkcióhatár | 11. fejezet |
-| Munkaórák és teljes projektütem | 12. fejezet |
-| Tesztesetek és mérési kapuk | 13. fejezet |
+| Coach-first launch and external interviews | Sections 4 and 13 |
+| Time measurement as a critical assumption | Sections 4.1 and 15 |
+| Kaizer test and differentiation | Sections 3.3 and 3.4 |
+| Rules, missing data and review | Sections 6–7 |
+| Database, versions and AI task split | Sections 8–9 |
+| Data handling and feature boundaries | Section 11 |
+| Work hours and overall project pace | Section 12 |
+| Test cases and measurement gates | Section 13 |
 
-A heti órabontás és a kapuk célértékei (például a 10 perces és havi 5 eses időigény-küszöb) saját tervezési javaslatok. A tényleges ráfordítás és a mérések alapján frissítendők.
+The weekly hour breakdown and the gate target values (for example the time-cost threshold of 10 minutes and 5 cases per month) are my own planning proposals. They should be updated based on actual effort and measurements.

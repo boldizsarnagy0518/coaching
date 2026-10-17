@@ -1,39 +1,45 @@
-# Implementálási állapot
+# Implementation status
 
-2026. október 17. Az aktuális, 17 munkahétre átdolgozott ütemterv az irányadó.
+17 October 2026. The current schedule, reworked to 17 work weeks, is the reference.
 
-Az egyes részek részletes állapota és döntési indoklása a [modulonkénti README-mutatóból](../README.md) érhető el. A [dokumentációs szabály](README.md) alapján ezek a későbbi fejlesztésekkel együtt frissítendők.
+The detailed state and decision reasoning of each part is available from the [per-module README index](../README.md). Under the [documentation rule](README.md), these are updated together with later development.
 
-## Elkészült első műszaki munkacsomag
+## Completed technical work packages
 
-- Django 5.2, helyi SQLite, verziózott adatbázis-migráció.
-- Bejelentkezés és minden alkalmazásnézetben szerveroldali edzői adatelkülönítés.
-- Sportoló, terv, edzés és előírt sorozat létrehozása.
-- Tényleges teljesítés külön rekordban: ismétlés, kg, opcionális sorozat-RPE.
-- Mobilbarát szerveroldali felület, mentési visszajelzés és részleges naplózottság.
-- Azonos beküldés ismétlése nem dupláz; eltérő beküldés nem írja felül a korábbi teljesítést.
-- Szintetikus demóadat létrehozása meglévő fiókhoz, jelszóváltoztatás nélkül.
-- Automatikus funkcionális és hozzáférési tesztek, GitHub Actions munkafolyamat.
+**Training log prototype**
 
-Ez előrehozott technikai alap a felhasználó implementálási kérése alapján. Nem igazolja a validációs kapu teljesülését, és nem jelenti a 6–10. hét összes feladatának befejezését.
+- Django 5.2, local SQLite, versioned database migrations.
+- Login and server-side coach data isolation in every app view.
+- Creating athletes, plans, sessions and prescribed sets.
+- Actual performance in a separate record: reps, kg, optional set RPE.
+- Mobile-friendly server-rendered UI, save feedback and partial logging status.
+- Repeating an identical submission does not duplicate; a different submission does not overwrite the earlier performance.
+- Synthetic demo data for an existing account, without changing passwords.
+- Automated functional and access tests, GitHub Actions workflow.
 
-## Nyitott validáció
+**CSV and Google Sheets transfer**
 
-Új műszaki rész: CSV-export, feltöltött CSV és publikált Google Sheets CSV-link szerkezeti előnézete. Ez még nem importál adatot. Privát Google-hitelesítés nincs. [Állapot és döntések](data-transfer/README.md). Ellenőrzés: 26 helyi teszt sikeres; az online lekérés szimulált válasszal tesztelt.
+CSV export, plus a structural preview of an uploaded CSV or a published Google Sheets CSV link. Nothing is imported yet. No private Google authentication. [State and decisions](data-transfer/README.md).
 
-- Saját valós esetek dokumentálása; nincs kitalált interjú vagy ügyféladat.
-- Edzői/sportolói interjúk és legalább 5 teljes kézi módosítás időmérése.
-- Kaizer és egy további alternatíva tényleges kipróbálása.
-- Kereslet, időigény és megkülönböztetés kapujának bizonyítékai.
+**Verification:** 26 local tests passed; the online download is tested with a simulated response.
 
-## Következő műszaki munkacsomag
+This is a technical foundation brought forward at the user's request. It does not prove that the validation gate has been met, and it does not mean all tasks of weeks 6–10 are complete.
 
-1. Edzéstervek változtathatatlan verziói és a verzióhoz kapcsolt előírások.
-2. Kimaradás/áthelyezés strukturált kérése, javaslat, előtte/utána és edzői jóváhagyás.
-3. Elavult verzióra érkező jóváhagyás elutasítása; naplózott teljesítés megőrzése.
+## Open validation
 
-## Még nincs kész
+- Document your own real cases; no invented interview or client data.
+- Coach and athlete interviews and the time measurement of at least 5 complete manual adjustments.
+- Actually trying Kaizer and one more alternative.
+- Evidence for the demand, time-cost and differentiation gate.
 
-Sportolói saját belépés; jóváhagyott CSV-import és oszlop-hozzárendelés; privát Google Sheets-kapcsolat; múltbeli napló korrekciós folyamata; teljes offline működés; tervverziók; automatikus újratervezés; AI/MCP; számlázás; nyilvános telepítés; üzemeltetési mentés-visszaállítás és teljes adatkezelési folyamat.
+## Next technical work packages
 
-A mostani felület edzői használatra készült: az edző rögzíti a sportoló adatait. Az alkalmazás nem módosít automatikusan terhelést és nem ad sérüléskezelési tanácsot. Valós sportolói adatok éles szolgáltatására még nem alkalmas.
+1. Immutable versions of training plans and prescriptions linked to a version.
+2. Structured request for missed/moved sessions, proposal, before/after view and coach approval.
+3. Rejecting approvals for stale versions; keeping logged performance.
+
+## Not done yet
+
+Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; plan versions; automatic re-planning; AI/MCP; billing; public deployment; operational backup and restore and a complete data-handling process.
+
+The current UI is built for coaches: the coach records the athlete's data. The app does not change loads automatically and gives no injury-management advice. It is not yet suitable for running a live service with real athlete data.

@@ -1,70 +1,71 @@
-# Állapot, döntések és validáció
+# Status, decisions and validation
 
-[Projektáttekintés](../README.md) · Frissítve: 2026. október 17.
+[Project overview](../README.md) · Updated: 17 October 2026
 
-## Felelősség
+## Responsibility
 
-Elkülöníteni a működő terméket, a tervezett funkciókat és a még nem igazolt üzleti feltételezéseket. A részek README-jei a kód mellett mutatják a helyi állapotot és a döntések indokait.
+Keep the working product, the planned features and the not-yet-proven business assumptions clearly apart. The module READMEs, next to the code, show the local state and the reasoning behind decisions.
 
-## Aktuális állapot
+## Current state
 
-| Dokumentum | Szerep |
+| Document | Role |
 |---|---|
-| [Implementálási állapot](implementation-status.md) | Rövid összesítés arról, mi készült el és mi következik |
-| [Validációs munkalap](validation-template.md) | Üres sablon interjúhoz, időméréshez és konkurenspróbához |
-| [CSV és Google Sheets](data-transfer/README.md) | Adatátadási módok, korlátok és a privát kapcsolat terve |
-| [Aktuális ütemterv](../elso_szakasz_utemterv.md) | 17 munkahét, heti 10 + 2 óra, költözési szünet és kapuk |
-| [Kutatás és termékterv](../eroemelo_ai_kutatas_es_terv.md) | Források, alternatívák, árazási és szakmai hipotézisek |
+| [Implementation status](implementation-status.md) | Short summary of what is done and what comes next |
+| [Validation worksheet](validation-template.md) | Empty template for interviews, time measurement and the competitor trial |
+| [CSV and Google Sheets](data-transfer/README.md) | Data transfer options, limits and the plan for a private connection |
+| [Current schedule](../elso_szakasz_utemterv.md) | 17 work weeks, 10 + 2 hours per week, moving break and gates |
+| [Research and product plan](../eroemelo_ai_kutatas_es_terv.md) | Sources, alternatives, pricing and professional hypotheses |
 
-A piaci validáció még nyitott. A kód elkészítése nem helyettesíti az interjúkat, az időmérést vagy a Kaizer tényleges kipróbálását. Az előrehozott műszaki prototípus a felhasználó implementálási kérése alapján készült.
+Market validation is still open. Writing code does not replace the interviews, the time measurement or actually trying Kaizer. The technical prototype was brought forward at the user's explicit request.
 
-## Döntések és indokok
+## Decisions and reasoning
 
-| Döntés | Miért? | Következmény / korlát |
+| Decision | Why? | Consequence / limit |
 |---|---|---|
-| Részenkénti README | A kód megnyitásakor látható legyen, hol tartunk és miért így készült | Minden érintett funkcióváltozáskor karban kell tartani |
-| Egy központi mutató | A projekt egésze áttekinthető marad | A részleteket nem másoljuk minden dokumentumba |
-| Tény, terv és hipotézis elkülönítése | Ne tűnjön késznek vagy igazoltnak, ami még nincs meg | Az állapot mellé ellenőrzési bizonyíték kell |
-| Relatív munkahét | A heti kapacitás és költözési dátum változhat | A naptári határidő külön egyeztetendő |
+| One README per module | When opening the code, it is visible where we are and why it was built this way | Must be maintained with every relevant feature change |
+| One central index | The project stays easy to overview as a whole | Details are not copied into every document |
+| Separate fact, plan and hypothesis | Nothing should look finished or proven when it is not | Every status claim needs verification evidence |
+| Relative work weeks | Weekly capacity and the moving date can change | Calendar deadlines are agreed separately |
+| English documentation, Hungarian UI | Code and docs stay readable for any developer or tool; users see their own language | UI strings and docs are maintained in different languages |
 
-## Dokumentációs szabály a következő fejlesztésekhez
+## Documentation rule for further development
 
-1. Minden önálló felelősségű új modul kapjon `README.md` fájlt. Üres csomagokhoz vagy minden egyes fájlhoz nem kell külön leírás.
-2. Tartalmazza: **felelősség; aktuális állapot; mi hiányzik; döntés, indok és következmény; ellenőrzés; következő lépés; frissítés dátuma**.
-3. Az aktuális állapotot a kódhoz igazítva írd át. Korábbi döntés megváltozásakor röviden őrizd meg, mi váltotta fel és miért.
-4. A javasolt következő lépést ne írd kész funkcióként. A tesztparancs megléte nem bizonyítja a sikeres futást; jelöld a ténylegesen ellenőrzött eredményt.
-5. A részletek elsődleges helye a modul README-je. A gyökérmutatót és az implementálási összesítést csak a projektállapotot érintő változásnál frissítsd.
-6. Kód, teszt és a hozzájuk tartozó dokumentáció ugyanabban a változtatásban kerüljön be. Relatív linkeket használj, hogy GitHubon is működjenek.
-7. Személyes adatot, jelszót és API-kulcsot ne írj a dokumentációba. Kitöltött, személyes adatot tartalmazó munkalap a Gitből kizárt `private/` mappába kerüljön.
+1. Every new module with its own responsibility gets a `README.md`. Empty packages or individual files do not need their own description.
+2. It contains: **responsibility; current state; what is missing; decision, reason and consequence; verification; next step; date of update**.
+3. Rewrite the current state to match the code. When an earlier decision changes, briefly keep what replaced it and why.
+4. Do not describe a proposed next step as a finished feature. The existence of a test command does not prove a successful run; record the result that was actually verified.
+5. Details live primarily in the module README. Update the root index and the implementation summary only when the overall project state changes.
+6. Code, tests and their documentation go into the same change. Use relative links so they also work on GitHub.
+7. Never write personal data, passwords or API keys into documentation. A filled-in worksheet containing personal data belongs in the Git-ignored `private/` folder.
 
-### Új rész README-sablonja
+### README template for a new module
 
 ```markdown
-# A rész neve
+# Module name
 
-Frissítve: ÉÉÉÉ. HH. NN.
+Updated: DD Month YYYY
 
-## Felelősség
-Melyik feladatot kezeli, és melyik másik részhez kapcsolódik?
+## Responsibility
+Which task does it handle, and which other part does it connect to?
 
-## Aktuális állapot
-Mi működik ténylegesen? Mi hiányzik vagy korlátozott?
+## Current state
+What actually works? What is missing or limited?
 
-## Döntések és indokok
-| Döntés | Miért? | Következmény / korlát |
+## Decisions and reasoning
+| Decision | Why? | Consequence / limit |
 |---|---|---|
 
-## Ellenőrzés
-Parancs, teszt vagy kézi próba; utolsó igazolt eredmény.
+## Verification
+Command, test or manual check; last verified result.
 
-## Következő lépés
-A következő konkrét munkacsomag és a nyitott döntés.
+## Next step
+The next concrete work package and the open decision.
 ```
 
-## Ellenőrzés
+## Verification
 
-Dokumentációmódosításnál a leírás és a kód összhangját, a relatív linkek célját és a Git-diffet ellenőrizd. Pusztán szöveges módosítás miatt nem szükséges új alkalmazástesztet írni.
+For documentation changes, check that the text matches the code, that relative links resolve and review the Git diff. A purely textual change does not require new application tests.
 
-## Következő lépés
+## Next step
 
-A valós validációs adatok összegyűjtése és a kapudöntés rögzítése. A következő implementáció után a tervverziózás döntései és igazolt állapota kerüljön az edzésmodul README-jébe.
+Collect real validation data and record the gate decision.

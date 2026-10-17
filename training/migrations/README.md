@@ -1,28 +1,28 @@
-# Adatbázisséma és migrációk
+# Database schema and migrations
 
-[Edzésmodul](../README.md) · Frissítve: 2026. október 17.
+[Training module](../README.md) · Updated: 17 October 2026
 
-## Felelősség
+## Responsibility
 
-Az adatbázis szerkezetének reprodukálható létrehozása és későbbi módosítása.
+Reproducible creation and later modification of the database structure.
 
-## Aktuális állapot
+## Current state
 
-Az [0001_initial.py](0001_initial.py) létrehozza az öt edzési modellt, a kapcsolataikat, az egyediségi és értéktartomány-korlátokat. A bejelentkezési és munkamenet-táblákat a Django saját migrációi hozzák létre.
+[0001_initial.py](0001_initial.py) creates the five training models, their relations, and the uniqueness and value-range constraints. Login and session tables are created by Django's own migrations.
 
-**Nincs kész:** edzéstervek tartalmi verziózása, PostgreSQL-migrációs próba, üzemeltetési visszaállítási eljárás. Az adatbázisséma verziója nem azonos egy sportoló tervének verziójával.
+**Not done:** content versioning of training plans, a PostgreSQL migration trial, an operational restore procedure. The database schema version is not the same thing as the version of an athlete's plan.
 
-## Döntések és indokok
+## Decisions and reasoning
 
-| Döntés | Miért? | Következmény / korlát |
+| Decision | Why? | Consequence / limit |
 |---|---|---|
-| Migrációs fájlok a repóban | Ugyanaz a séma építhető fel másik gépen és CI-ben | Modellváltozás mellé migráció is kell |
-| Adatbáziskorlátok is védik a naplót | Az űrlapon kívüli írás se kerülhesse meg az alapkorlátokat | A szakmai helyességhez további szabályok kellenek |
-| A helyi adatbázis nincs Gitben | Ne kerüljenek fel sportolói vagy bejelentkezési adatok | A Git nem adatmentés; a működő adatbázisról külön mentés kell |
+| Migration files in the repo | The same schema can be built on another machine and in CI | Every model change needs a migration |
+| Database constraints also protect the log | Writes outside the forms cannot bypass the basic limits | Professional correctness needs additional rules |
+| The local database is not in Git | Athlete or login data must not be uploaded | Git is not a backup; the working database needs a separate backup |
 
-## Ellenőrzés és használat
+## Verification and usage
 
-A projekt gyökeréből:
+From the project root:
 
 ```powershell
 uv run python manage.py makemigrations --check --dry-run
@@ -30,8 +30,8 @@ uv run python manage.py migrate
 uv run python manage.py test training
 ```
 
-A tesztek külön tesztadatbázist használnak. Az első migráció helyben lefutott; a legutóbbi ellenőrzés nem talált hiányzó migrációt.
+Tests use a separate test database. The first migration ran locally; the latest check found no missing migration.
 
-## Következő lépés
+## Next step
 
-A tervverziózás új migrációt igényel, a korábbi naplók megőrzésével. Megosztott vagy alkalmazott migrációt utólag ne írjunk át; a következő változást új fájl rögzítse.
+Plan versioning needs a new migration that keeps earlier logs. Do not rewrite a shared or applied migration afterwards; record the next change in a new file.

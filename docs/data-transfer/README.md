@@ -1,56 +1,57 @@
-# CSV és Google Sheets adatátadás
+# CSV and Google Sheets data transfer
 
-[Projektáttekintés](../../README.md) · Frissítve: 2026. október 17.
+[Project overview](../../README.md) · Updated: 17 October 2026
 
-## Aktuális állapot
+## Current state
 
-| Út | Mi működik? | Határ |
+| Path | What works? | Limit |
 |---|---|---|
-| App → CSV | Sportolónként letölthető az előírt és tényleges sorozatok naplója | Üres edzések nem szerepelnek |
-| Letöltött Google Sheets CSV → app | Feltöltés, szerkezeti ellenőrzés, első 20 sor előnézete | Nincs oszlop-hozzárendelés vagy jóváhagyott import |
-| Publikált Google Sheets → app | Gombnyomásra online CSV-letöltés és ugyanaz az előnézet | Valódi táblázatos próba még nincs; szimulált válasszal tesztelt |
-| Privát Google Sheets → app | Következő integrációs irány | Google-hitelesítés még nincs |
+| App → CSV | Per-athlete download of the prescribed and actual set log | Sessions without sets are not included |
+| Downloaded Google Sheets CSV → app | Upload, structural validation, preview of the first 20 rows | No column mapping or approved import |
+| Published Google Sheets → app | On-demand online CSV download and the same preview | No real spreadsheet trial yet; tested with a simulated response |
+| Private Google Sheets → app | Next integration direction | No Google authentication yet |
 
-## Használat
+## Usage
 
-A sportoló lapján: **Napló letöltése CSV-ben**, illetve **CSV / Google Sheets előnézet**.
+On the athlete page: **Napló letöltése CSV-ben** (download log as CSV) and **CSV / Google Sheets előnézet** (preview).
 
-Kézi út: Google Sheets → Fájl → Letöltés → vesszővel tagolt értékek (.csv), az aktuális munkalapból. Utána feltöltés az alkalmazásba. A Google-fiókhoz ilyenkor nem kap hozzáférést az alkalmazás.
+Manual path: Google Sheets → File → Download → Comma-separated values (.csv), from the current sheet. Then upload it into the app. The app gets no access to the Google account this way.
 
-Online út: már publikált munkalap CSV-linkje, ilyen szerkezettel:
+Online path: the CSV link of an already published sheet, in this form:
 
 ```text
-https://docs.google.com/spreadsheets/d/e/PUBLIKALT_AZONOSITO/pub?gid=0&single=true&output=csv
+https://docs.google.com/spreadsheets/d/e/PUBLISHED_ID/pub?gid=0&single=true&output=csv
 ```
 
-Ez mintaszerkezet, nem valódi táblázat. A szokásos `/spreadsheets/d/…/edit` link még nem támogatott. A letöltést az alkalmazást futtató gép végzi; helyi futásnál ez a saját géped. Nincs háttérszinkron vagy visszaírás a Sheetsbe.
+This is an example structure, not a real spreadsheet. The usual `/spreadsheets/d/…/edit` link is not supported yet. The download is performed by the machine running the app; when running locally, that is your own computer. There is no background sync and no write-back to Sheets.
 
-**Privát sportolói adatot ne publikálj a csatlakozás miatt.** A publikálás szélesebb körnek adhat hozzáférést. Privát táblázathoz most a kézi CSV-út használható. [Google publikálási útmutató](https://support.google.com/docs/answer/183965).
+**Do not publish private athlete data just to connect it.** Publishing can give a wider audience access. For a private sheet, use the manual CSV path for now. [Google publishing guide](https://support.google.com/docs/answer/183965).
 
-## Döntések és indokok
+## Decisions and reasoning
 
-| Döntés | Miért? | Következmény / korlát |
+| Decision | Why? | Consequence / limit |
 |---|---|---|
-| Közös CSV-olvasó mindkét forráshoz | A formátumellenőrzés ugyanaz legyen | A privát kapcsolat később ugyanide csatlakozhat |
-| Csak előnézet, nincs automatikus import | Az edzői táblázatok eltérő elrendezésűek | Oszlop-hozzárendelés és jóváhagyás a következő lépés |
-| Csak meghatározott Google URL-ek és átirányítások | Ne lehessen tetszőleges internetes vagy helyi címet lekérni | Privát és sima megosztási linket elutasítunk |
-| 1 MB, 2000 sor, 50 oszlop | Korlátozott erőforrás-használat a prototípusban | Nagy táblázatot szűkíteni kell |
-| UTF-8, opcionális BOM; vessző, pontosvessző vagy tab | Google-export és gyakori CSV-változatok kezelése | Excel-munkafüzet és összevont cellák értelmezése nincs |
-| Exportban képletvédelem | A felhasználói név/gyakorlat ne fusson képletként | Veszélyes kezdőkarakter elé aposztróf kerül; nem veszteségmentes adatbázismentés |
+| One shared CSV reader for both sources | Format validation should be identical | A private connection can later plug into the same reader |
+| Preview only, no automatic import | Coaches' spreadsheets have different layouts | Column mapping and approval are the next step |
+| Only specific Google URLs and redirects | Arbitrary internet or local addresses must not be fetchable | Private and plain sharing links are rejected |
+| 1 MB, 2,000 rows, 50 columns | Bounded resource use in the prototype | Large sheets must be narrowed down |
+| UTF-8 with optional BOM; comma, semicolon or tab | Handles Google exports and common CSV variants | Excel workbooks and merged cells are not interpreted |
+| Formula protection in exports | User-entered names/exercises must not run as formulas | Dangerous leading characters get an apostrophe prefix; not a lossless database backup |
+| The form is bound only on POST | Opening the page must not show validation errors before submission | Regression test covers the first GET |
 
-Az előnézet egyedi, nem üres fejlécet és azonos oszlopszámú sorokat vár. Nem értelmezi a képletek, színek vagy edzői elrendezések jelentését. Nem ment edzési rekordot, fájlt vagy forráslinket az alkalmazás adatbázisába; a keretrendszer átmeneti feltöltési kezelése ettől külön működik. A válasz `no-store` fejlécet kap.
+The preview expects unique, non-empty headers and rows with the same number of columns. It does not interpret the meaning of formulas, colours or coach-specific layouts. It does not save training records, files or source links into the app database; the framework's temporary upload handling works independently of this. The response gets a `no-store` header.
 
-Exportoszlopok: `plan`, `session`, `scheduled_date`, `exercise`, `planned_reps`, `planned_weight_kg`, `actual_reps`, `actual_weight_kg`, `rpe`, `recorded_at`. A számok tizedesponttal, a súlyok kg-ban szerepelnek; a táblázatkezelő területi beállítása számít. A dátum tervezett nap, a rögzítési idő nem az edzés tényleges kezdete. Nem naplózott sorozatnál a teljesítés üres, nulla ismétlésnél nulla.
+Export columns: `plan`, `session`, `scheduled_date`, `exercise`, `planned_reps`, `planned_weight_kg`, `actual_reps`, `actual_weight_kg`, `rpe`, `recorded_at`. Numbers use a decimal point and weights are in kg; the spreadsheet's locale settings matter. The date is the scheduled day; the recording time is not the actual start of the session. For sets that were not logged, the actual values are empty; zero reps are written as zero.
 
-## Ellenőrzés
+## Verification
 
-`uv run python manage.py test`: 26 sikeres helyi teszt. Az adatátadási ellenőrzések: export, hozzáférés, fájlelőnézet, hibás CSV, elválasztók, méretkorlát, képletvédelem, URL- és átirányítás-korlátozás, szimulált online válasz, valamint hibaüzenet nélküli első megnyitás. Élő Google-táblázatos próba még szükséges.
+`uv run python manage.py test`: the data-transfer checks cover export, access control, file preview, malformed CSV, delimiters, size limit, formula protection, URL and redirect restrictions, a simulated online response and an error-free first page load. The current total test count is recorded in the [training README](../../training/README.md). A trial with a live Google spreadsheet is still needed.
 
-Kód: [transfers.py](../../training/transfers.py), [nézetek](../../training/views.py), [tesztek](../../training/test_transfers.py).
+Code: [transfers.py](../../training/transfers.py), [views](../../training/views.py), [tests](../../training/test_transfers.py).
 
-## Következő lépés
+## Next step
 
-1. Anonimizált edzői minták alapján oszlop-hozzárendelés.
-2. Ellenőrzés és jóváhagyás utáni import, ismételt import elleni védelemmel.
-3. Privát Google-kapcsolat: felhasználói engedélyezés, csak olvasási hozzáférés, munkalapválasztás és visszavonás.
-4. Később időzített frissítés, változásfelismeréssel és konfliktuskezeléssel.
+1. Column mapping based on anonymised coach samples.
+2. Import after validation and approval, with protection against repeated imports.
+3. Private Google connection: user authorisation, read-only access, sheet selection and revocation.
+4. Later: scheduled refresh with change detection and conflict handling.

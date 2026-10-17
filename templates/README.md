@@ -1,41 +1,40 @@
-# Felület és űrlapok
+# User interface and forms
 
-[Projektáttekintés](../README.md) · Frissítve: 2026. október 17.
+[Project overview](../README.md) · Updated: 17 October 2026
 
-## Felelősség
+## Responsibility
 
-A Django által kiszolgált HTML-képernyők. A bevitel ellenőrzése és az adatelkülönítés a háttérrendszer feladata; a sablon nem jogosultsági határ.
+The HTML screens served by Django. Input validation and data isolation are the backend's job; templates are not a permission boundary. UI text is Hungarian by design (see [AGENTS.md](../AGENTS.md)).
 
-## Aktuális állapot
+## Current state
 
-| Fájl | Képernyő |
+| File | Screen |
 |---|---|
-| [base.html](base.html) | Fejléc, kijelentkezés, állapotüzenetek, közös keret |
-| [registration/login.html](registration/login.html) | Edzői bejelentkezés |
-| [training/dashboard.html](training/dashboard.html) | Saját sportolók és tervszám |
-| [training/athlete.html](training/athlete.html) | Egy sportoló tervei |
-| [training/plan.html](training/plan.html) | Egy terv edzései |
-| [training/session.html](training/session.html) | Előírt és tényleges sorozatok, naplózott darabszám |
-| [training/form.html](training/form.html) | Közös adatbeviteli űrlap |
+| [base.html](base.html) | Header, logout, status messages, shared layout |
+| [registration/login.html](registration/login.html) | Coach login |
+| [training/dashboard.html](training/dashboard.html) | Own athletes and number of plans |
+| [training/athlete.html](training/athlete.html) | One athlete's plans |
+| [training/plan.html](training/plan.html) | Sessions of one plan |
+| [training/session.html](training/session.html) | Prescribed and actual sets, number of logged sets |
+| [training/form.html](training/form.html) | Shared data entry form |
+| [training/transfer.html](training/transfer.html) | CSV / Google Sheets structural preview |
 
-**Nincs kész:** sportolói saját felület, tervkülönbség és jóváhagyási képernyő, utólagos javítás, offline piszkozat. A részleges állapot a naplórekordok számából származik; nem önálló edzésstátusz-modell.
+**Not done:** athlete self-service UI, plan diff and approval screen, later correction of logs, offline drafts. "Partially completed" is derived from the number of log records; it is not a separate session status model.
 
-## Döntések és indokok
+## Decisions and reasoning
 
-| Döntés | Miért? | Következmény / korlát |
+| Decision | Why? | Consequence / limit |
 |---|---|---|
-| Szerveroldali HTML | A mellékprojekt első adatútjához kevesebb külön technológia kell | Jelenleg minden művelethez szerverkapcsolat szükséges |
-| Közös keret és űrlapsablon | Az új képernyők egységesek, kisebb a másolt kód mennyisége | A speciális naplózási élmény későbbi finomítás |
-| Előírás és tényleges érték együtt látható | Az eltérés ellenőrizhető | Még nincs trend vagy szakmai kiértékelés |
-| Mentés után visszairányítás | A felhasználó a mentett állapotot látja | Az ismételt beküldés védelmét ezen felül a backend adja |
-| Sikerüzenet csak mentés/azonos újraküldés után | Hibás adat ne tűnjön sikeresen rögzítettnek | Ütközésnél még egyszerű 409-es szöveges válasz van |
+| Server-rendered HTML | The first data path of a side project needs fewer separate technologies | Every action currently needs a server connection |
+| Shared layout and form template | New screens stay consistent with less duplicated code | A specialised logging experience is a later refinement |
+| Prescription and actual value shown together | The difference can be checked | No trend or professional evaluation yet |
+| Redirect after save | The user sees the saved state | Protection against resubmission is provided by the backend in addition |
+| Success message only after a save or an identical resubmission | Invalid data must not look successfully recorded | A conflict currently returns a plain 409 text response |
 
-## Ellenőrzés
+## Verification
 
-A [funkcionális tesztek](../training/tests.py) ellenőrzik a válaszokat, a megjelenő mentett állapotot, részleges naplózást és a HTML-escapinget. A bejelentkezési oldal HTTP-n ellenőrzött. Teljes böngészős, mobilos és akadálymentességi teszt nincs igazolva; az előző böngészős próba eszközhibával megszakadt.
+The [functional tests](../training/tests.py) check responses, the displayed saved state, partial logging and HTML escaping. The login page has been checked over HTTP. A full browser, mobile and accessibility test has not been verified; the previous browser trial was interrupted by a tooling error.
 
-## Következő lépés
+## Next step
 
-Új képernyő: [training/transfer.html](training/transfer.html). Fájlfeltöltés vagy publikált Google Sheets CSV-link után táblázatos előnézetet mutat. Az oszlop-hozzárendelés és a jóváhagyott import még nincs kész. A sportoló lapjáról a CSV-export is elérhető. [Működés és döntések](../docs/data-transfer/README.md).
-
-A [tervverziózás](../docs/implementation-status.md) után előtte/utána nézet és jóváhagyás. Külön használati próba kell annak mérésére, hogy a naplózás telefonon segítség nélkül végigvihető-e. Megjelenési döntések: [static](../static/README.md).
+After plan versioning: a before/after view and approval. A separate usability trial is needed to measure whether logging on a phone can be completed without help. Styling decisions: [static](../static/README.md).

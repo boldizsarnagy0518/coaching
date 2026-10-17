@@ -1,12 +1,17 @@
-# Projektmunkaszabályok
+# Project working rules
 
-## Modulonkénti dokumentáció
+## Language
 
-A felhasználó kérése alapján minden önálló projektrészhez legyen README az aktuális állapotról és a döntésekről, azok indokával.
+- Code comments, docstrings, commit messages and all Markdown documentation are written in **English**.
+- User-facing UI text (templates, form labels, validation and status messages) stays **Hungarian**, because the first users are Hungarian coaches and athletes.
 
-- Funkció vagy architektúra módosításakor ugyanabban a változtatásban frissítsd az érintett rész README-jét.
-- Új önálló modulnál hozz létre README.md-t, és linkeld a gyökér README mutatójából.
-- A szerkezetet és a sablont a docs/README.md tartalmazza.
-- Válaszd külön a működő funkciót, a hiányzó elemet és a javaslatot. Ne állíts el nem végzett validációt vagy tesztsikert.
-- Jelentős projektállapot-változáskor frissítsd a docs/implementation-status.md összesítést is.
-- Dokumentációba és Gitbe ne kerüljön titok, helyi adatbázis vagy személyes sportolói/interjúadat.
+## Per-module documentation
+
+At the user's request, every self-contained part of the project has a README describing its current state and its decisions, with the reasoning behind them.
+
+- When a feature or the architecture changes, update the affected README in the same change.
+- A new self-contained module gets its own README.md, linked from the module index in the root README.
+- The structure and template are defined in docs/README.md.
+- Keep working features, missing pieces and proposals separate. Never claim validation or test success that was not actually performed.
+- When the overall project state changes significantly, also update the docs/implementation-status.md summary.
+- Secrets, local databases and personal athlete or interview data must never go into documentation or Git.

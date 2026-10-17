@@ -1,51 +1,51 @@
 # Coaching
 
-Erőemelő edzők tervmódosítási és naplózási munkáját segítő alkalmazás.
+An application that supports powerlifting coaches in plan adjustment and training logging.
 
-## Modulok és aktuális állapot
+## Modules and current state
 
-Frissítve: 2026. október 17. Jelenleg helyi edzői naplózó prototípus működik. Az egyes részek állapota, döntései és korlátai a saját README-jükben találhatók.
+Updated: 17 October 2026. A local coach training-log prototype works. The state, decisions and limits of each part are in its own README.
 
-| Rész | Állapot | Részletes leírás |
+| Part | State | Details |
 |---|---|---|
-| Alkalmazásbeállítások és belépés | Helyi használatra működik | [coaching](coaching/README.md) |
-| Sportolók, tervek és naplózás | Első adatfolyamat működik; újratervezés nincs | [training](training/README.md) |
-| Adatbázisséma | Első migráció elkészült; ez nem tervverziózás | [migrations](training/migrations/README.md) |
-| Demóadat és kezelői parancsok | Szintetikus példa meglévő fiókhoz | [management](training/management/README.md) |
-| Felület és űrlapok | Magyar, szerveroldali edzői képernyők | [templates](templates/README.md) |
-| Megjelenés | Egy reszponzív stíluslap | [static](static/README.md) |
-| Automatizált ellenőrzés | 26 helyi teszt sikeres; CI definiálva | [workflows](.github/workflows/README.md) |
-| Tervezés és validáció | Dokumentálva; piaci kapu még nyitott | [docs](docs/README.md) |
-| CSV és Google Sheets | CSV-export, fájl- és publikált linkes előnézet | [Adatátadás](docs/data-transfer/README.md) |
+| Application settings and login | Works for local use | [coaching](coaching/README.md) |
+| Athletes, plans and logging | First data flow works; no re-planning | [training](training/README.md) |
+| Database schema | First migration done; this is not plan versioning | [migrations](training/migrations/README.md) |
+| Demo data and management commands | Synthetic example for an existing account | [management](training/management/README.md) |
+| User interface and forms | Hungarian, server-rendered coach screens | [templates](templates/README.md) |
+| Styling | One responsive stylesheet | [static](static/README.md) |
+| Automated checks | 26 local tests pass; CI defined | [workflows](.github/workflows/README.md) |
+| Planning and validation | Documented; market gate still open | [docs](docs/README.md) |
+| CSV and Google Sheets | CSV export, file and published-link preview | [Data transfer](docs/data-transfer/README.md) |
 
-Minden rész README-je azonos szerkezetben írja le a felelősséget, a működő és hiányzó elemeket, a **mit–miért–következmény** döntéseket, az ellenőrzést és a következő lépést. Funkcióváltozáskor az érintett README is frissítendő. A pontos szabály a [dokumentációs útmutatóban](docs/README.md) található.
+Every module README describes, in the same structure, its responsibility, what works and what is missing, the **what–why–consequence** decisions, verification and the next step. When a feature changes, the affected README is updated too. The exact rule is in the [documentation guide](docs/README.md); project rules, including the language rule (English docs and comments, Hungarian UI), are in [AGENTS.md](AGENTS.md).
 
-## Tervezés
+## Planning
 
-- [Kutatás és termékterv](eroemelo_ai_kutatas_es_terv.md)
-- [Aktuális ütemterv](elso_szakasz_utemterv.md): 17 munkahét, heti 10 + 2 óra, külön validációs kapuval.
+- [Research and product plan](eroemelo_ai_kutatas_es_terv.md)
+- [Current schedule](elso_szakasz_utemterv.md): 17 work weeks, 10 + 2 hours per week, with a separate validation gate.
 
-A kutatási terv korábbi 16 hetes forgatókönyvét az aktuális ütemterv pontosítja. A validációs kapu teljesülése még nincs igazolva; interjúeredményt vagy versenytárstesztet nem helyettesít a megírt kód.
+The current schedule refines the research plan's earlier 16-week scenario. Meeting the validation gate has not been proven yet; written code does not replace interview results or a competitor trial.
 
-## Adatok
+## Data
 
-A repóba csak kód, tervezési anyag és szintetikus példa kerülhet. Valós sportolói adatot, interjúalanyok elérhetőségét, adatbázist, jelszót vagy API-kulcsot ne commitolj. A helyi adatfájlok helye a Git által figyelmen kívül hagyott `private/` könyvtár.
+Only code, planning material and synthetic examples may go into the repository. Do not commit real athlete data, interviewees' contact details, databases, passwords or API keys. Local data files belong in the Git-ignored `private/` folder.
 
-## Helyi indítás
+## Running locally
 
-Python 3.12+ és `uv` szükséges. A függőségek verzióját az `uv.lock` rögzíti.
+Python 3.12+ and `uv` are required. Dependency versions are pinned in `uv.lock`.
 
 ```powershell
 uv sync --locked
 uv run python manage.py migrate
 uv run python manage.py createsuperuser
-uv run python manage.py seed_demo --username SAJAT_FELHASZNALONEV
+uv run python manage.py seed_demo --username YOUR_USERNAME
 uv run python manage.py runserver 127.0.0.1:8765
 ```
 
-Nyisd meg a http://127.0.0.1:8765 címet, és lépj be az általad létrehozott fiókkal. A demófeltöltés opcionális, csak szintetikus edzést hoz létre. A jelszót a `createsuperuser` interaktívan kéri; nincs beégetett demójelszó. Másik edzői tesztfiók ugyanígy készíthető.
+Open http://127.0.0.1:8765 and log in with the account you created. Loading demo data is optional and creates only a synthetic session. `createsuperuser` asks for the password interactively; there is no hard-coded demo password. Another coach test account can be created the same way.
 
-## Ellenőrzés
+## Verification
 
 ```powershell
 uv run python manage.py check
@@ -53,17 +53,17 @@ uv run python manage.py makemigrations --check --dry-run
 uv run python manage.py test
 ```
 
-## Jelenlegi funkciók és korlátok
+## Current features and limits
 
-Sportoló → terv → edzés → előírt sorozat → tényleges teljesítés. Az edző csak a saját sportolóit éri el; az előírt és tényleges adatok külön tárolódnak. Az ismételt azonos naplóbeküldés nem dupláz. A felület magyar és telefonra igazított.
+Athlete → plan → session → prescribed set → actual performance. A coach can only access their own athletes; prescribed and actual data are stored separately. Repeating an identical log submission does not duplicate. The UI is Hungarian and phone-friendly.
 
-Ez helyi, szintetikus adatokkal használható **edzői prototípus**. CSV-export és CSV/Google Sheets-előnézet már van; jóváhagyott import, privát Google-kapcsolat, sportolói saját belépés, verziózott újratervezés és AI-integráció még nincs. A napló utólagos szerkesztése nincs kész; eltérő ismételt beküldésnél a rendszer 409-es ütközést jelez és megőrzi a korábbi adatot.
+This is a **coach prototype** for local use with synthetic data. CSV export and a CSV / Google Sheets preview exist; approved import, a private Google connection, athlete self-service login, versioned re-planning and AI integration do not yet. Later editing of the log is not done; a different repeated submission returns a 409 conflict and keeps the earlier data.
 
-- [Részletes állapot és következő feladatok](docs/implementation-status.md)
-- [Validációs munkalap](docs/validation-template.md)
+- [Detailed status and next tasks](docs/implementation-status.md)
+- [Validation worksheet](docs/validation-template.md)
 
-## Technológiai döntés
+## Technology decision
 
-Django 5.2 és szerveroldali HTML: egy Python-alkalmazásban ad hitelesítést, űrlapokat, adatkezelést és mobilbarát felületet. A helyi próba SQLite-ot használ; PostgreSQL-re áttérés és az ottani tranzakciós viselkedés ellenőrzése külön lépés. Most nincs külső AI-hívás vagy API-kulcsigény.
+Django 5.2 and server-rendered HTML: one Python application provides authentication, forms, data handling and a mobile-friendly UI. The local trial uses SQLite; moving to PostgreSQL and checking its transactional behaviour is a separate step. There are currently no external AI calls and no API key requirement.
 
-A helyi titkos kulcs az első futáskor a kizárt `.local/` mappába kerül. Az adatbázis szintén kizárt. A fejlesztői beállítások csak localhostot fogadnak. Ne tedd a fejlesztői szervert nyilvánossá: külső használat előtt külön telepítési, adatvédelmi és biztonsági munkacsomag szükséges. A `DJANGO_DEBUG=false` beállítás megköveteli a `DJANGO_SECRET_KEY` környezeti változót, de ez önmagában nem kész éles konfiguráció.
+The local secret key is written to the excluded `.local/` folder on first run. The database is excluded too. Development settings accept localhost only. Do not expose the development server publicly: external use requires a separate deployment, data-protection and security work package. `DJANGO_DEBUG=false` requires the `DJANGO_SECRET_KEY` environment variable, but that alone is not a finished production configuration.

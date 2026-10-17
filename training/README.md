@@ -1,58 +1,57 @@
-# Sportolók, tervek és edzésnapló
+# Athletes, plans and training log
 
-[Projektáttekintés](../README.md) · Frissítve: 2026. október 17.
+[Project overview](../README.md) · Updated: 17 October 2026
 
-## Felelősség
+## Responsibility
 
-A sportoló → terv → edzés → előírt sorozat → tényleges teljesítés folyamat. Jelenleg az edző rögzíti az adatokat; a sportolónak nincs saját fiókja.
+The athlete → plan → session → prescribed set → actual performance workflow. Currently the coach records the data; athletes have no account of their own.
 
-## Aktuális állapot
+## Current state
 
-| Alrész | Működik | Még hiányzik |
+| Sub-part | Works | Still missing |
 |---|---|---|
-| Sportoló | Név, edzőhöz rendelés, saját lista | Részletes profil, sportolói belépés |
-| Terv és edzés | Tervcím, edzésnév és tervezett dátum | Tervverzió, kimaradás és áthelyezés |
-| Előírt sorozat | Szabad szöveges gyakorlatváltozat, ismétlés, kg | Gyakorlatkatalógus, csere és cél-RPE |
-| Tényleges teljesítés | Ismétlés, kg, opcionális RPE, rögzítési idő | Utólagos javítás, külön tényleges edzésidőpont |
-| Beküldés | Ismételt azonos kérés nem dupláz; ütközéskor 409 | Naplókorrekciós munkafolyamat |
-| Hozzáférés | Minden alkalmazásnézet szűr a bejelentkezett edzőre | Megosztott coaching, sportolói szerep |
+| Athlete | Name, assignment to a coach, own list | Detailed profile, athlete login |
+| Plan and session | Plan title, session name and scheduled date | Plan versions, missed and moved sessions |
+| Prescribed set | Free-text exercise variant, reps, kg | Exercise catalogue, swaps and target RPE |
+| Actual performance | Reps, kg, optional RPE, recording time | Later correction, separate actual session time |
+| Submission | An identical repeated request does not duplicate; conflicts return 409 | Log correction workflow |
+| Access | Every app view filters by the logged-in coach | Shared coaching, athlete role |
+| CSV transfer | Export and read-only CSV / Google Sheets preview | Column mapping and approved import, see [data transfer](../docs/data-transfer/README.md) |
 
-Fő fájlok: [models.py](models.py) az adatok, [forms.py](forms.py) a bevitel, [views.py](views.py) a folyamat és jogosultság, [urls.py](urls.py) az útvonalak, [tests.py](tests.py) az ellenőrzések.
+Main files: [models.py](models.py) data, [forms.py](forms.py) input, [views.py](views.py) workflow and permissions, [urls.py](urls.py) routes, [transfers.py](transfers.py) CSV reading and restricted download, [tests.py](tests.py) and [test_transfers.py](test_transfers.py) checks.
 
-## Adatkapcsolatok
+## Data relations
 
 `User → Athlete → TrainingPlan → TrainingSession → PlannedSet → SetLog`
 
-Egy előírt sorozathoz legfeljebb egy teljesítés kapcsolható. Az előírt és a tényleges értékek külön mezőkben, külön rekordban vannak. A napló létrehozása nem módosítja az előírást. Ez **nem** teljes auditnapló vagy változtathatatlan tervtörténet: ezek még nincsenek megvalósítva.
+At most one performance record can belong to a prescribed set. Prescribed and actual values are kept in separate fields and separate records. Creating a log entry does not modify the prescription. This is **not** a full audit log or an immutable plan history; those are not implemented yet.
 
-## Döntések és indokok
+## Decisions and reasoning
 
-| Döntés | Miért? | Következmény / korlát |
+| Decision | Why? | Consequence / limit |
 |---|---|---|
-| Előírás és teljesítés szétválasztása | Összehasonlítható marad, mit kért az edző és mi történt | Tervmódosításhoz később verziókapcsolat kell |
-| Egy naplórekord sorozatonként | Egyértelmű első naplózási modell és adatbázisban kikényszeríthető korlát | Extra próbálkozás és javítás még nem kezelhető külön eseményként |
-| Egyedi beküldési UUID | Hálózati újraküldés ne hozzon létre új teljesítést | Azonos UUID és azonos adat ismétlése elfogadott; más tartalom ütközés |
-| Adatbázis-tranzakció és egyediségi korlát | A duplázást ne csak a felület előzze meg | A párhuzamos kérések terheléses vizsgálata még hiányzik |
-| Edzői szűrés szerveroldalon | A kliens által küldött sportolóazonosító nem jogosultság | Minden új olvasó/író nézetnél ugyanez szükséges |
-| Tényleges ismétlés lehet nulla, RPE elhagyható | Sikertelen sorozat és hiányzó becslés is rögzíthető | A naplózott sorozat nem feltétlenül sikeresen teljesített sorozat |
-| Súly decimális kg-ban | Az előírás és teljesítés pontosan összevethető | Font és mértékegységváltás nincs |
-| Kapcsolatoknál `PROTECT` | Ne lehessen véletlenül láncoltan törölni az előzményeket | A végleges adatvédelmi törlési folyamat külön fejlesztés |
+| Separate prescription and performance | What the coach asked for and what happened remain comparable | Plan adjustment will need a link to plan versions |
+| One log record per set | A clear first logging model with a uniqueness constraint enforced by the database | Extra attempts and corrections cannot yet be handled as separate events |
+| Unique submission UUID | A network retry must not create a new performance record | Repeating the same UUID with the same data is accepted; different content is a conflict |
+| Database transaction and uniqueness constraint | Duplication is prevented not only by the UI | Load testing of concurrent requests is still missing |
+| Server-side coach filtering | An athlete ID sent by the client is not a permission | Every new read/write view needs the same filter |
+| Actual reps may be zero, RPE optional | Failed sets and missing estimates can also be recorded | A logged set is not necessarily a successful set |
+| Weight as decimal kg | Prescription and performance are exactly comparable | No pounds or unit conversion |
+| `PROTECT` on relations | History cannot be deleted accidentally by cascading | The final data-protection deletion process is separate work |
 
-Az 1–100 célismétlés, 0–100 tényleges ismétlés és 1–10 RPE **beviteli korlát**, nem szakmai terhelésajánlás. A formai érvényesség nem bizonyítja egy edzésterv megfelelőségét.
+The ranges 1–100 target reps, 0–100 actual reps and 1–10 RPE are **input limits**, not professional load recommendations. Formal validity does not prove that a training plan is appropriate.
 
-## Ellenőrzés
+## Verification
 
-`uv run python manage.py test training` a projekt gyökeréből. A modul két tesztfájlja összesen 26 tesztet tartalmaz:
+Run `uv run python manage.py test training` from the project root. The module's two test files contain 26 tests in total:
 
-- [tests.py](tests.py), 14 teszt: a teljes létrehozási út, az idegen edző hozzáférésének tiltása, az újraküldés, az ütközések, hibás értékek, opcionális RPE, részleges naplózás, CSRF, HTML-escaping és a demóadat ismételhetősége.
-- [test_transfers.py](test_transfers.py), 12 teszt: CSV-export és -előnézet, URL- és átirányítás-korlátozás, hozzáférés, valamint az, hogy az előnézet oldal első megnyitásakor nem jelenik meg hibaüzenet.
+- [tests.py](tests.py), 14 tests: the full creation path, blocking another coach's access, resubmission, conflicts, invalid values, optional RPE, partial logging, CSRF, HTML escaping and repeatable demo data.
+- [test_transfers.py](test_transfers.py), 12 tests: CSV export and preview, URL and redirect restrictions, access control, and that the preview page shows no error on first load.
 
-Utolsó helyi eredmény: 26/26 sikeres.
+Last local result: 26/26 passed.
 
-## Következő lépés
+## Next step
 
-Új alrész: [CSV és Google Sheets](../docs/data-transfer/README.md). A `transfers.py` közös CSV-olvasót és korlátozott online letöltést ad; a nézetek saját sportolóhoz kötött exportot és csak olvasható előnézetet biztosítanak. A tesztek száma és eredménye az Ellenőrzés részben szerepel.
+Plan versions, then a structured move request, a reviewable proposal and coach approval. The module currently does not re-plan, does not call AI and gives no injury-management advice.
 
-Tervverziók, majd strukturált áthelyezési kérés, ellenőrizhető javaslat és edzői jóváhagyás. A mostani modul nem tervez újra, nem hív AI-t és nem ad sérüléskezelési tanácsot.
-
-Kapcsolódó részletek: [adatbázismigrációk](migrations/README.md), [demóadat](management/README.md), [felület](../templates/README.md).
+Related details: [database migrations](migrations/README.md), [demo data](management/README.md), [user interface](../templates/README.md).

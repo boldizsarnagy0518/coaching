@@ -1,35 +1,35 @@
-# Kezelői parancsok és demóadat
+# Management commands and demo data
 
-[Edzésmodul](../README.md) · Frissítve: 2026. október 17.
+[Training module](../README.md) · Updated: 17 October 2026
 
-## Felelősség
+## Responsibility
 
-Kézzel indítható, reprodukálható segédműveletek. Jelenleg egyetlen parancs van: [seed_demo](commands/seed_demo.py).
+Manually started, reproducible helper operations. Currently there is a single command: [seed_demo](commands/seed_demo.py).
 
-## Aktuális állapot
+## Current state
 
-Meglévő felhasználóhoz létrehoz egy szintetikus sportolót, egy tervet és egy edzést három előírt sorozattal. Felhasználót nem hoz létre, jelszót nem módosít, teljesítést nem naplóz. Hiányzó felhasználónál hibát jelez.
+For an existing user, it creates one synthetic athlete, one plan and one session with three prescribed sets. It does not create users, does not change passwords and does not log performance. It reports an error if the user does not exist.
 
 ```powershell
-uv run python manage.py seed_demo --username SAJAT_FELHASZNALONEV
+uv run python manage.py seed_demo --username YOUR_USERNAME
 ```
 
-A parancsot a projekt gyökeréből futtasd. Az edzés kezdeti dátuma a futtató gép aktuális dátuma.
+Run the command from the project root. The session date is the current date of the machine running it.
 
-## Döntések és indokok
+## Decisions and reasoning
 
-| Döntés | Miért? | Következmény / korlát |
+| Decision | Why? | Consequence / limit |
 |---|---|---|
-| Csak szintetikus adatok | Valós ügyféladat nélkül is bemutatható az adatfolyamat | A példasúlyok nem személyre szabott edzésajánlások |
-| Meglévő fiók szükséges | A tesztadat betöltése ne változtassa a hitelesítést | A fiókot külön kell létrehozni |
-| Meglévő demóelemek újrahasználata | Ismételt futtatás ne duplázza a példát | Azonosítás név/cím alapján; átnevezett adatnál új példa keletkezhet |
-| Sorozatok csak új edzésnél készülnek | Újrafuttatás ne írja át a már használt demót | Nem általános javító vagy visszaállító parancs |
-| Egy tranzakció | Sikertelen futás ne hagyjon félkész adatsort | Üzemeltetési mentést nem helyettesít |
+| Synthetic data only | The data flow can be demonstrated without real client data | The example weights are not personalised training advice |
+| Existing account required | Loading test data must not change authentication | The account has to be created separately |
+| Reuse existing demo items | Running it again must not duplicate the example | Matching is by name/title; renamed data can lead to a new example |
+| Sets are only created for a new session | Re-running must not overwrite a demo already in use | Not a general repair or reset command |
+| One transaction | A failed run must not leave half-created data | Does not replace an operational backup |
 
-## Ellenőrzés
+## Verification
 
-A `test_seed_demo_is_repeatable_and_scoped_to_user` teszt ismételten futtatja a parancsot, és ellenőrzi az edzőhöz kötött létrehozást. A teljes tesztcsomag: `uv run python manage.py test training`.
+The `test_seed_demo_is_repeatable_and_scoped_to_user` test runs the command repeatedly and checks that it creates data scoped to the given coach. Full suite: `uv run python manage.py test training`.
 
-## Következő lépés
+## Next step
 
-Új teszthelyzetekhez névvel azonosítható szintetikus adatkészletek adhatók. CSV-import, export és adatjavító parancs még nincs.
+Named synthetic datasets can be added for new test scenarios. There is no CSV import, export or data repair command yet.
