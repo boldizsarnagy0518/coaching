@@ -4,7 +4,7 @@ import csv
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -75,7 +75,11 @@ def athlete_create(request):
 
 @login_required
 def athlete_detail(request, pk):
-    athlete = get_object_or_404(Athlete, pk=pk, coach=request.user)
+    athletes = Athlete.objects.annotate(
+        active_memory_count=Count("memories", filter=Q(memories__status="active")),
+        proposed_memory_count=Count("memories", filter=Q(memories__status="proposed")),
+    )
+    athlete = get_object_or_404(athletes, pk=pk, coach=request.user)
     return render(request, "training/athlete.html", {"athlete": athlete})
 
 

@@ -8,7 +8,7 @@
 
 ## Current state
 
-One shared stylesheet works: dark background, light text, green accent, flexible card grid. Below 600 px, the important rows stack vertically. Inputs and buttons are at least 46 px tall, and keyboard focus is visible.
+One shared stylesheet works: dark background, light text, green accent, flexible card grid. Below 600 px, the important rows stack vertically. Inputs, selects, text areas and buttons are at least 46 px tall, and keyboard focus is visible. The memory screen adds row separators, button groups and a collapsible resolved-history panel.
 
 **Not done:** light theme, a full component library, a measured contrast and accessibility audit, visual checks on multiple devices. Having responsive CSS does not replace these.
 

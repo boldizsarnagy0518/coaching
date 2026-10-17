@@ -18,6 +18,7 @@ The HTML screens served by Django. Input validation and data isolation are the b
 | [training/session.html](training/session.html) | Prescribed and actual sets, number of logged sets |
 | [training/form.html](training/form.html) | Shared data entry form |
 | [training/transfer.html](training/transfer.html) | CSV / Google Sheets structural preview |
+| [memory/athlete_memory.html](memory/athlete_memory.html) | Athlete memory: pending AI proposals, active entries by category, new entry form, resolved history |
 
 **Not done:** athlete self-service UI, plan diff and approval screen, later correction of logs, offline drafts. "Partially completed" is derived from the number of log records; it is not a separate session status model.
 
@@ -33,7 +34,7 @@ The HTML screens served by Django. Input validation and data isolation are the b
 
 ## Verification
 
-The [functional tests](../training/tests.py) check responses, the displayed saved state, partial logging and HTML escaping. The login page has been checked over HTTP. A full browser, mobile and accessibility test has not been verified; the previous browser trial was interrupted by a tooling error.
+The [functional tests](../training/tests.py) and the [memory tests](../memory/tests.py) check responses, the displayed saved state, partial logging and HTML escaping. The login page has been checked over HTTP. A full browser, mobile and accessibility test has not been verified; the previous browser trial was interrupted by a tooling error.
 
 ## Next step
 

@@ -1,10 +1,10 @@
 # Coaching
 
-An application that supports powerlifting coaches in plan adjustment and training logging.
+An application that supports powerlifting coaches in plan adjustment, training logging and remembering each athlete's history.
 
 ## Modules and current state
 
-Updated: 17 October 2026. A local coach training-log prototype works. The state, decisions and limits of each part are in its own README.
+Updated: 17 October 2026. A local coach training-log prototype with a curated athlete memory and a local MCP server works. The state, decisions and limits of each part are in its own README.
 
 | Part | State | Details |
 |---|---|---|
@@ -14,7 +14,8 @@ Updated: 17 October 2026. A local coach training-log prototype works. The state,
 | Demo data and management commands | Synthetic example for an existing account | [management](training/management/README.md) |
 | User interface and forms | Hungarian, server-rendered coach screens | [templates](templates/README.md) |
 | Styling | One responsive stylesheet | [static](static/README.md) |
-| Automated checks | 26 local tests pass; CI defined | [workflows](.github/workflows/README.md) |
+| Athlete memory and MCP server | Coach entries, reviewed AI proposals, local stdio MCP server | [memory](memory/README.md) |
+| Automated checks | 40 local tests pass; CI defined | [workflows](.github/workflows/README.md) |
 | Planning and validation | Documented; market gate still open | [docs](docs/README.md) |
 | CSV and Google Sheets | CSV export, file and published-link preview | [Data transfer](docs/data-transfer/README.md) |
 
@@ -57,13 +58,15 @@ uv run python manage.py test
 
 Athlete → plan → session → prescribed set → actual performance. A coach can only access their own athletes; prescribed and actual data are stored separately. Repeating an identical log submission does not duplicate. The UI is Hungarian and phone-friendly.
 
-This is a **coach prototype** for local use with synthetic data. CSV export and a CSV / Google Sheets preview exist; approved import, a private Google connection, athlete self-service login, versioned re-planning and AI integration do not yet. Later editing of the log is not done; a different repeated submission returns a 409 conflict and keeps the earlier data.
+Per athlete, the coach keeps a curated memory of durable facts (pain, technique issues, preferences, constraints, goals, decisions). An AI client connected through the local MCP server can read it together with recent sessions, save facts the coach explicitly asks it to remember, and propose new ones for the coach to approve.
+
+This is a **coach prototype** for local use with synthetic data. CSV export and a CSV / Google Sheets preview exist; approved import, a private Google connection, athlete self-service login, versioned re-planning and an in-app AI chat do not yet. Later editing of the log is not done; a different repeated submission returns a 409 conflict and keeps the earlier data.
 
 - [Detailed status and next tasks](docs/implementation-status.md)
 - [Validation worksheet](docs/validation-template.md)
 
 ## Technology decision
 
-Django 5.2 and server-rendered HTML: one Python application provides authentication, forms, data handling and a mobile-friendly UI. The local trial uses SQLite; moving to PostgreSQL and checking its transactional behaviour is a separate step. There are currently no external AI calls and no API key requirement.
+Django 5.2 and server-rendered HTML: one Python application provides authentication, forms, data handling and a mobile-friendly UI. The local trial uses SQLite; moving to PostgreSQL and checking its transactional behaviour is a separate step. The app itself makes no AI calls and needs no API key; AI access goes through a local MCP server (official `mcp` Python SDK) that an AI client such as Claude Desktop starts on the coach's machine. Data returned by its tools reaches that client's AI provider, see the [memory README](memory/README.md).
 
 The local secret key is written to the excluded `.local/` folder on first run. The database is excluded too. Development settings accept localhost only. Do not expose the development server publicly: external use requires a separate deployment, data-protection and security work package. `DJANGO_DEBUG=false` requires the `DJANGO_SECRET_KEY` environment variable, but that alone is not a finished production configuration.

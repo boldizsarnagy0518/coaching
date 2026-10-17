@@ -17,6 +17,7 @@ The athlete → plan → session → prescribed set → actual performance workf
 | Submission | An identical repeated request does not duplicate; conflicts return 409 | Log correction workflow |
 | Access | Every app view filters by the logged-in coach | Shared coaching, athlete role |
 | CSV transfer | Export and read-only CSV / Google Sheets preview | Column mapping and approved import, see [data transfer](../docs/data-transfer/README.md) |
+| Athlete page | Link to the athlete memory with active and pending counts | The memory itself lives in the [memory module](../memory/README.md) |
 
 Main files: [models.py](models.py) data, [forms.py](forms.py) input, [views.py](views.py) workflow and permissions, [urls.py](urls.py) routes, [transfers.py](transfers.py) CSV reading and restricted download, [tests.py](tests.py) and [test_transfers.py](test_transfers.py) checks.
 
@@ -48,7 +49,7 @@ Run `uv run python manage.py test training` from the project root. The module's 
 - [tests.py](tests.py), 14 tests: the full creation path, blocking another coach's access, resubmission, conflicts, invalid values, optional RPE, partial logging, CSRF, HTML escaping and repeatable demo data.
 - [test_transfers.py](test_transfers.py), 12 tests: CSV export and preview, URL and redirect restrictions, access control, and that the preview page shows no error on first load.
 
-Last local result: 26/26 passed.
+Last local result: 26/26 passed (40/40 in the full suite including the [memory module](../memory/README.md)).
 
 ## Next step
 

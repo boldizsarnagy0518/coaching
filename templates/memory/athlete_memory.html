@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{% url 'athlete' athlete.pk %}">← {{ athlete.name }}</a>
+<div class="page-heading"><div><h1>Emlékek · {{ athlete.name }}</h1>
+<p>Csak tartós, edzői szempontból fontos tudnivalók. Az edzésszámok a naplóban vannak, ide nem kell átmásolni őket.</p></div></div>
+
+{% if proposals %}<h2>Jóváhagyásra váró javaslatok ({{ proposals|length }})</h2>
+<div class="stack">{% for memory in proposals %}<article class="panel">
+<span class="eyebrow">{{ memory.get_category_display }} · {{ memory.get_source_display }} · {{ memory.observed_on|date:'Y. m. d.' }}</span>
+<p><strong>{{ memory.content }}</strong>{% if memory.exercise %} · {{ memory.exercise }}{% endif %}</p>
+{% if memory.reason %}<p class="muted">Indoklás: {{ memory.reason }}</p>{% endif %}
+<div class="actions"><form method="post" action="{% url 'memory-review' memory.pk 'approve' %}">{% csrf_token %}<button type="submit">Jóváhagyás</button></form>
+<form method="post" action="{% url 'memory-review' memory.pk 'reject' %}">{% csrf_token %}<button class="quiet" type="submit">Elutasítás</button></form></div>
+</article>{% endfor %}</div>{% endif %}
+
+<h2>Aktív emlékek</h2>
+{% for label, items in groups %}<section class="panel"><h3>{{ label }}</h3>
+{% for memory in items %}<div class="memory-row"><p><strong>{{ memory.content }}</strong>{% if memory.exercise %} · {{ memory.exercise }}{% endif %}</p>
+<p class="muted">{{ memory.observed_on|date:'Y. m. d.' }} · {{ memory.get_source_display }}{% if memory.reason %} · {{ memory.reason }}{% endif %}</p>
+<form method="post" action="{% url 'memory-review' memory.pk 'resolve' %}">{% csrf_token %}<button class="quiet" type="submit">Lezárás</button></form></div>
+{% endfor %}</section>
+{% empty %}<p class="panel">Még nincs aktív bejegyzés.</p>{% endfor %}
+
+<h2>Új bejegyzés</h2>
+<section class="panel narrow"><form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Mentés</button></form></section>
+
+{% if resolved %}<details class="panel"><summary>Lezárt bejegyzések ({{ resolved|length }})</summary>
+{% for memory in resolved %}<div class="memory-row"><p>{{ memory.get_category_display }}: {{ memory.content }}</p>
+<p class="muted">{{ memory.observed_on|date:'Y. m. d.' }} · lezárva {{ memory.reviewed_at|date:'Y. m. d.' }}</p>
+<form method="post" action="{% url 'memory-review' memory.pk 'reactivate' %}">{% csrf_token %}<button class="quiet" type="submit">Újra aktív</button></form></div>
+{% endfor %}</details>{% endif %}
+{% endblock %}
