@@ -14,3 +14,9 @@ urlpatterns = [
     path("sessions/<int:pk>/sets/new/", views.set_create, name="set-create"),
     path("sets/<int:pk>/log/", views.log_set, name="log-set"),
 ]
+
+urlpatterns += [
+    path("sessions/<int:pk>/change/<str:kind>/", views.session_change, name="session-change"),
+    path("changes/<int:pk>/", views.change_detail, name="plan-change"),
+    path("changes/<int:pk>/<str:action>/", views.change_review, name="plan-change-review"),
+]

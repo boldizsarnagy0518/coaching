@@ -22,6 +22,10 @@ Use save_memory_on_coach_request only when the coach explicitly asks you to reme
 Otherwise, if you notice a fact that clearly meets the rules above, call propose_memory with a reason;
 the coach reviews proposals in the app. If a tool reports a duplicate, do not retry with a rephrasing.
 
+For schedule changes (missed session, different training days), use the upcoming_sessions from
+get_athlete_context and call propose_session_change. Never claim a change is applied: the coach
+approves it in the app after seeing the before/after view. Do not change loads or exercises.
+
 Categories: {mcp_tools.CATEGORIES}."""
 
 READ_ONLY = ToolAnnotations(readOnlyHint=True, openWorldHint=False)
@@ -66,6 +70,15 @@ def build_server(coach):
         """Save a fact immediately as active. Only when the coach explicitly asked to remember it."""
         return await run(mcp_tools.save_memory_on_coach_request, athlete_id, category, content, exercise,
             observed_on)
+
+    @server.tool(annotations=WRITE)
+    async def propose_session_change(athlete_id: int, session_id: int, kind: str, reason: str,
+            new_date: str | None = None) -> dict:
+        """Propose moving (kind="move", new_date YYYY-MM-DD) or skipping (kind="skip") one upcoming session.
+
+        Only unlogged sessions can change. Nothing is applied until the coach approves it in the app.
+        """
+        return await run(mcp_tools.propose_session_change, athlete_id, session_id, kind, reason, new_date)
 
     return server
 

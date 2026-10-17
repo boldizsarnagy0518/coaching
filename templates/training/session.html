@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}<a href="{% url 'plan' session.plan_id %}">← {{ session.plan.title }}</a>
 <div class="page-heading"><div><h1>{{ session.title }}</h1><p>{{ session.plan.athlete.name }} · {{ session.scheduled_date|date:'Y. m. d.' }}</p></div><a class="button" href="{% url 'set-create' session.pk %}">+ Előírt sorozat</a></div>
+{% if session.status == 'skipped' %}<p class="notice">Ez az edzés ki van hagyva; nem naplózható.</p>{% endif %}
+{% if pending_change %}<p class="notice"><a href="{% url 'plan-change' pending_change.pk %}">Jóváhagyásra váró módosítás: {{ pending_change.get_kind_display }} →</a></p>
+{% elif can_change %}<div class="actions"><a class="button quiet" href="{% url 'session-change' session.pk 'move' %}">Áthelyezés másik napra</a><a class="button quiet" href="{% url 'session-change' session.pk 'skip' %}">Kihagyás</a></div>{% endif %}
 <p class="progress">{{ completed }} / {{ sets|length }} sorozat naplózva{% if completed and completed < sets|length %} · Részben teljesített{% endif %}</p>
 <div class="stack">{% for item in sets %}<article class="panel set-row"><div><span class="eyebrow">{{ forloop.counter }}. sorozat</span><h2>{{ item.exercise }}</h2><p>Előírás: <strong>{{ item.weight_kg }} kg × {{ item.reps }}</strong></p></div>
-{% if item.performance %}<div class="performance"><span class="badge">Mentve</span><p>Tényleges: <strong>{{ item.performance.weight_kg }} kg × {{ item.performance.reps }}</strong></p><p class="muted">RPE: {{ item.performance.rpe|default_if_none:'nincs megadva' }}</p></div>{% else %}<a class="button" href="{% url 'log-set' item.pk %}">Teljesítés naplózása</a>{% endif %}</article>
+{% if item.performance %}<div class="performance"><span class="badge">Mentve</span><p>Tényleges: <strong>{{ item.performance.weight_kg }} kg × {{ item.performance.reps }}</strong></p><p class="muted">RPE: {{ item.performance.rpe|default_if_none:'nincs megadva' }}</p></div>{% elif session.status != 'skipped' %}<a class="button" href="{% url 'log-set' item.pk %}">Teljesítés naplózása</a>{% endif %}</article>
 {% empty %}<p class="panel">Először adj hozzá egy előírt sorozatot.</p>{% endfor %}</div>{% endblock %}

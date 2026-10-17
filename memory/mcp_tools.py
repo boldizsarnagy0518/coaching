@@ -7,12 +7,14 @@ from datetime import date
 
 from django.db.models import Q
 
-from training.models import Athlete, TrainingSession
+from training import plan_changes
+from training.models import Athlete, ChangeSource, SessionStatus, TrainingSession
 
 from . import services
 from .models import AthleteMemory, MemoryCategory, MemorySource, MemoryStatus
 
 RECENT_SESSIONS = 5
+UPCOMING_SESSIONS = 10
 SEARCH_LIMIT = 30
 
 
@@ -54,11 +56,15 @@ def get_athlete_context(coach, athlete_id):
             })
         recent.append({"date": session.scheduled_date.isoformat(), "plan": session.plan.title,
             "session": session.title, "sets": sets})
+    upcoming = (TrainingSession.objects.filter(plan__athlete=athlete, scheduled_date__gt=date.today(),
+        status=SessionStatus.PLANNED).select_related("plan").order_by("scheduled_date", "pk")[:UPCOMING_SESSIONS])
     return {
         "athlete": {"id": athlete.pk, "name": athlete.name},
         "active_memories": [_memory_dict(m) for m in memories],
         "pending_proposals": athlete.memories.filter(status=MemoryStatus.PROPOSED).count(),
         "recent_sessions": recent,
+        "upcoming_sessions": [{"session_id": s.pk, "date": s.scheduled_date.isoformat(), "plan": s.plan.title,
+            "plan_version": s.plan.version, "session": s.title} for s in upcoming],
     }
 
 
@@ -93,6 +99,23 @@ def propose_memory(coach, athlete_id, category, content, reason, exercise="", ob
 
 def save_memory_on_coach_request(coach, athlete_id, category, content, exercise="", observed_on=None):
     return _write(coach, athlete_id, MemorySource.AI_COACH_REQUEST, category, content, exercise, "", observed_on)
+
+
+
+def propose_session_change(coach, athlete_id, session_id, kind, reason, new_date=None):
+    """Create a move/skip proposal for one future, unlogged session; the coach approves it in the app."""
+    athlete = _athlete(coach, athlete_id)
+    try:
+        session = TrainingSession.objects.get(pk=session_id, plan__athlete=athlete)
+    except TrainingSession.DoesNotExist as exc:
+        raise ValueError(f"No session with id {session_id} for this athlete.") from exc
+    try:
+        change = plan_changes.propose(coach, session, kind, date.fromisoformat(new_date) if new_date else None,
+            reason, source=ChangeSource.AI)
+    except plan_changes.PlanChangeError as exc:
+        return {"saved": False, "reason": str(exc)}
+    return {"saved": True, "change_id": change.pk, "status": change.status, "base_version": change.base_version,
+        "note": "The coach reviews the before/after view and approves or rejects it in the app."}
 
 
 CATEGORIES = ", ".join(f"{value} ({label})" for value, label in MemoryCategory.choices)

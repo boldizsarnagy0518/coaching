@@ -14,7 +14,7 @@ A curated, per-athlete "second memory" for the coach: durable facts such as pain
 | Coach entry (web) | **Emlékek** page from the athlete page; entries are active immediately | Editing an entry's text (currently: resolve and add a new one) |
 | Coach review | Approve / reject AI proposals; resolve and reactivate active entries | Bulk review, notifications |
 | Selection rules | Fixed categories, 12–300 characters, near-duplicate rejection, reason required for AI proposals, max 10 pending proposals per athlete | Expiry dates, automatic review reminders for old entries |
-| MCP server | Local stdio server for one coach: list athletes, athlete context, search, propose, save on explicit coach request | Remote/hosted access, athlete-side AI, in-app chat |
+| MCP server | Local stdio server for one coach: list athletes, athlete context, search, propose, save on explicit coach request, propose a session move/skip | Remote/hosted access, athlete-side AI, in-app chat |
 
 Main files: [models.py](models.py), [services.py](services.py) (write and review rules), [views.py](views.py), [mcp_tools.py](mcp_tools.py) (tool logic), [run_mcp_server.py](management/commands/run_mcp_server.py) (MCP wiring and AI instructions), [tests.py](tests.py). Screen: [athlete_memory.html](../templates/memory/athlete_memory.html).
 
@@ -44,7 +44,7 @@ The server runs locally over stdio and exposes only the given coach's athletes. 
 }
 ```
 
-Tools: `list_athletes`, `get_athlete_context` (active memories, pending count, last 5 sessions with prescribed vs actual sets), `search_memories`, `propose_memory`, `save_memory_on_coach_request`. The server's instructions tell the AI what is worth storing and what is not.
+Tools: `list_athletes`, `get_athlete_context` (active memories, pending count, last 5 sessions with prescribed vs actual sets, next 10 planned sessions), `search_memories`, `propose_memory`, `save_memory_on_coach_request`, and `propose_session_change` (move or skip one upcoming session; it becomes a plan change proposal that the coach approves in the app, see the [training module](../training/README.md)). The server's instructions tell the AI what is worth storing and what is not.
 
 **Data protection:** whatever the tools return is sent to the AI provider behind the client. Pain and injury entries can be health data. Use it with real athletes only after informing them and obtaining consent; until then, use synthetic data. See chapter 11 of the [research plan](../eroemelo_ai_kutatas_es_terv.md).
 
@@ -65,7 +65,7 @@ Tools: `list_athletes`, `get_athlete_context` (active memories, pending count, l
 
 ## Verification
 
-`uv run python manage.py test memory`: 14 tests covering the selection rules, review transitions, coach isolation in views and tools, the athlete-page counter and an end-to-end tool call through the FastMCP server. Last local result: all passed (40/40 in the full suite).
+`uv run python manage.py test memory`: 14 tests covering the selection rules, review transitions, coach isolation in views and tools, the athlete-page counter and an end-to-end tool call through the FastMCP server. Last local result: all passed (50/50 in the full suite).
 
 A manual stdio smoke test with the official MCP Python client (initialize, list tools, call `list_athletes`) succeeded against a temporary local account that was removed afterwards. Trying it in Claude Desktop with real conversations has not been done yet.
 

@@ -25,7 +25,11 @@ CSV export, plus a structural preview of an uploaded CSV or a published Google S
 
 Per-athlete curated memory with fixed categories, near-duplicate rejection, reasoned AI proposals that need coach approval, and resolve/reactivate. A local stdio MCP server exposes one coach's athletes, memory and recent sessions to an AI client. [State and decisions](../memory/README.md).
 
-**Verification:** 40 local tests passed; the online download is tested with a simulated response; a manual stdio smoke test of the MCP server succeeded. Real use in an AI client has not been tried yet.
+**Plan versions and session changes**
+
+Plans have a version number; a session without logged sets can be moved or skipped through a proposal with a before/after view and coach approval. Approving a proposal based on an outdated version marks it stale; skipped sessions cannot be logged. The AI can propose such changes through the MCP server, but cannot apply them. [State and decisions](../training/README.md).
+
+**Verification:** 50 local tests passed; the online download is tested with a simulated response; a manual stdio smoke test of the MCP server succeeded. Real use in an AI client has not been tried yet.
 
 This is a technical foundation brought forward at the user's request. It does not prove that the validation gate has been met, and it does not mean all tasks of weeks 6–10 are complete.
 
@@ -39,12 +43,13 @@ This is a technical foundation brought forward at the user's request. It does no
 
 ## Next technical work packages
 
-1. Immutable versions of training plans and prescriptions linked to a version.
-2. Structured request for missed/moved sessions, proposal, before/after view and coach approval.
-3. Rejecting approvals for stale versions; keeping logged performance.
+1. Partially completed sessions: move only the remaining sets.
+2. Changing the number of training days (e.g. 3 → 4) as one multi-session proposal.
+3. Versioned prescriptions, so load and exercise swaps can use the same approval flow.
+4. Trying the MCP server in a real AI client with synthetic data and tuning the memory rules.
 
 ## Not done yet
 
-Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; plan versions; automatic re-planning; in-app AI chat and AI-assisted plan proposals; editing memory entries; billing; public deployment; operational backup and restore and a complete data-handling process.
+Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; multi-session re-planning; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; editing memory entries; billing; public deployment; operational backup and restore and a complete data-handling process.
 
 The current UI is built for coaches: the coach records the athlete's data. The app does not change loads automatically and gives no injury-management advice. It is not yet suitable for running a live service with real athlete data.

@@ -5,12 +5,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
 from django.db.models import Count, Q
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
-from .forms import AthleteForm, PlanForm, SessionForm, PlannedSetForm, SetLogForm, TransferPreviewForm
+from . import plan_changes
+from .forms import AthleteForm, PlanForm, PlanChangeForm, SessionForm, PlannedSetForm, SetLogForm, TransferPreviewForm
 from .transfers import read_csv, download_sheet, safe_cell, MAX_BYTES
-from .models import Athlete, TrainingPlan, TrainingSession, PlannedSet, SetLog
+from .models import (Athlete, ChangeKind, ChangeStatus, PlanChange, PlannedSet, SessionStatus, SetLog,
+    TrainingPlan, TrainingSession)
 
 
 @login_required
@@ -92,7 +95,10 @@ def plan_create(request, pk):
 @login_required
 def plan_detail(request, pk):
     plan = get_object_or_404(TrainingPlan.objects.select_related("athlete"), pk=pk, athlete__coach=request.user)
-    return render(request, "training/plan.html", {"plan": plan})
+    changes = list(plan.changes.select_related("session"))
+    return render(request, "training/plan.html", {"plan": plan,
+        "pending": [c for c in changes if c.status == ChangeStatus.PROPOSED],
+        "history": [c for c in changes if c.status != ChangeStatus.PROPOSED]})
 
 
 @login_required
@@ -106,7 +112,9 @@ def session_detail(request, pk):
     session = get_object_or_404(TrainingSession.objects.select_related("plan__athlete"), pk=pk, plan__athlete__coach=request.user)
     sets = list(session.sets.select_related("performance"))
     completed = sum(hasattr(item, "performance") for item in sets)
-    return render(request, "training/session.html", {"session": session, "sets": sets, "completed": completed})
+    can_change = session.status == SessionStatus.PLANNED and not completed
+    return render(request, "training/session.html", {"session": session, "sets": sets, "completed": completed,
+        "can_change": can_change, "pending_change": session.changes.filter(status=ChangeStatus.PROPOSED).first()})
 
 
 @login_required
@@ -124,6 +132,8 @@ def set_create(request, pk):
 @login_required
 def log_set(request, pk):
     item = get_object_or_404(PlannedSet.objects.select_related("session"), pk=pk, session__plan__athlete__coach=request.user)
+    if item.session.status == SessionStatus.SKIPPED:
+        return HttpResponse("Ez az edzés ki van hagyva, ezért nem naplózható.", status=409)
     form = SetLogForm(request.POST if request.method == "POST" else None,
         initial={"submission_id": uuid.uuid4(), "reps": item.reps, "weight_kg": item.weight_kg})
     if request.method == "POST" and form.is_valid():
@@ -139,3 +149,49 @@ def log_set(request, pk):
         messages.success(request, "A sorozat mentve. Az előírt terv változatlan.")
         return redirect("session", pk=item.session_id)
     return render(request, "training/form.html", {"form": form, "title": f"Teljesítés · {item.exercise}"})
+
+
+@login_required
+def session_change(request, pk, kind):
+    if kind not in ChangeKind.values:
+        raise Http404
+    session = get_object_or_404(TrainingSession.objects.select_related("plan__athlete"), pk=pk,
+        plan__athlete__coach=request.user)
+    form = PlanChangeForm(request.POST if request.method == "POST" else None, kind=kind)
+    if request.method == "POST" and form.is_valid():
+        try:
+            change = plan_changes.propose(request.user, session, kind, form.cleaned_data.get("new_date"),
+                form.cleaned_data["reason"])
+        except plan_changes.PlanChangeError as exc:
+            form.add_error(None, str(exc))
+        else:
+            return redirect("plan-change", pk=change.pk)
+    title = f"{ChangeKind(kind).label} · {session.title} ({session.scheduled_date:%Y. %m. %d.})"
+    return render(request, "training/form.html", {"form": form, "title": title})
+
+
+@login_required
+def change_detail(request, pk):
+    change = get_object_or_404(PlanChange.objects.select_related("plan__athlete", "session"), pk=pk,
+        plan__athlete__coach=request.user)
+    return render(request, "training/plan_change.html", {"change": change, "rows": plan_changes.preview(change),
+        "outdated": change.status == ChangeStatus.PROPOSED and change.plan.version != change.base_version})
+
+
+@login_required
+@require_POST
+def change_review(request, pk, action):
+    handlers = {"approve": (plan_changes.approve, "Módosítás jóváhagyva; új tervverzió jött létre."),
+        "reject": (plan_changes.reject, "Módosítás elutasítva; a terv változatlan.")}
+    if action not in handlers:
+        raise Http404
+    change = get_object_or_404(PlanChange.objects.select_related("plan__athlete"), pk=pk,
+        plan__athlete__coach=request.user)
+    handler, success = handlers[action]
+    try:
+        handler(request.user, change)
+    except plan_changes.PlanChangeError as exc:
+        messages.error(request, str(exc))
+    else:
+        messages.success(request, success)
+    return redirect("plan", pk=change.plan_id)

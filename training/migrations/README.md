@@ -1,6 +1,6 @@
 # Database schema and migrations
 
-[Training module](../README.md) · Updated: 17 October 2026
+[Training module](../README.md) Â· Updated: 17 October 2026
 
 ## Responsibility
 
@@ -8,9 +8,9 @@ Reproducible creation and later modification of the database structure.
 
 ## Current state
 
-[0001_initial.py](0001_initial.py) creates the five training models, their relations, and the uniqueness and value-range constraints. Login and session tables are created by Django's own migrations.
+[0001_initial.py](0001_initial.py) creates the five training models, their relations, and the uniqueness and value-range constraints. [0002_plan_versions_and_changes.py](0002_plan_versions_and_changes.py) adds the plan version number, the session status and the `PlanChange` table; existing plans start at version 1 and existing sessions as planned. Login and session tables are created by Django's own migrations.
 
-**Not done:** content versioning of training plans, a PostgreSQL migration trial, an operational restore procedure. The database schema version is not the same thing as the version of an athlete's plan.
+**Not done:** versioning of prescribed sets, a PostgreSQL migration trial, an operational restore procedure. The database schema version is not the same thing as the version of an athlete's plan.
 
 ## Decisions and reasoning
 
@@ -30,8 +30,8 @@ uv run python manage.py migrate
 uv run python manage.py test training
 ```
 
-Tests use a separate test database. The first migration ran locally; the latest check found no missing migration.
+Tests use a separate test database. Both training migrations ran locally; the latest check found no missing migration.
 
 ## Next step
 
-Plan versioning needs a new migration that keeps earlier logs. Do not rewrite a shared or applied migration afterwards; record the next change in a new file.
+Prescription versioning will need a further migration that keeps earlier logs linked to the prescription they were logged against. Do not rewrite a shared or applied migration afterwards; record the next change in a new file.

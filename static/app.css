@@ -10,3 +10,8 @@ summary{cursor:pointer;font-weight:650}
 .memory-row{border-top:1px solid var(--border);padding:12px 0}
 .memory-row:first-of-type{border-top:0}
 .memory-row p{margin:4px 0}
+
+/* Plan change preview table. */
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--border)}
+tr.changed td{background:#263d29}
+.actions{margin:16px 0}

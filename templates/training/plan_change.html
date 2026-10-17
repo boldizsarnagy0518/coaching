@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{% url 'plan' change.plan_id %}">← {{ change.plan.title }}</a>
+<div class="page-heading"><div><h1>{{ change.get_kind_display }} · {{ change.session.title }}</h1>
+<p>{{ change.plan.athlete.name }} · {{ change.get_status_display }} · {{ change.get_source_display }} · alap: {{ change.base_version }}. verzió</p></div></div>
+{% if change.reason %}<p class="panel">Indoklás: {{ change.reason }}</p>{% endif %}
+{% if outdated %}<p class="notice" role="status">A terv a javaslat óta megváltozott. Jóváhagyáskor a rendszer elavultnak jelöli; készíts új javaslatot.</p>{% endif %}
+<h2>Előtte / utána</h2>
+<div class="panel" style="overflow-x:auto"><table><thead><tr><th scope="col">Edzés</th><th scope="col">Előtte</th><th scope="col">Utána</th></tr></thead>
+<tbody>{% for row in rows %}<tr class="{% if row.changed %}changed{% endif %}"><td>{{ row.session.title }}</td>
+<td>{{ row.before|date:'Y. m. d.' }}{% if row.session.status == 'skipped' %} · kihagyva{% endif %}</td>
+<td>{% if row.skipped_after %}<s>{{ row.after|date:'Y. m. d.' }}</s> · kihagyva{% else %}{{ row.after|date:'Y. m. d.' }}{% endif %}{% if row.same_day_conflict %} · <strong>ugyanerre a napra már van edzés</strong>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+<p class="muted">Csak a kiválasztott edzés dátuma vagy állapota változik. A naplózott teljesítések nem módosulnak.</p>
+{% if change.status == 'proposed' %}<div class="actions">
+<form method="post" action="{% url 'plan-change-review' change.pk 'approve' %}">{% csrf_token %}<button type="submit">Jóváhagyás</button></form>
+<form method="post" action="{% url 'plan-change-review' change.pk 'reject' %}">{% csrf_token %}<button class="quiet" type="submit">Elutasítás</button></form></div>{% endif %}
+{% endblock %}

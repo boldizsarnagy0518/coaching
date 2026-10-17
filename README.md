@@ -9,13 +9,13 @@ Updated: 17 October 2026. A local coach training-log prototype with a curated at
 | Part | State | Details |
 |---|---|---|
 | Application settings and login | Works for local use | [coaching](coaching/README.md) |
-| Athletes, plans and logging | First data flow works; no re-planning | [training](training/README.md) |
-| Database schema | First migration done; this is not plan versioning | [migrations](training/migrations/README.md) |
+| Athletes, plans and logging | Data flow, plan versions, move/skip proposals with approval | [training](training/README.md) |
+| Database schema | Two training migrations; the memory app has its own | [migrations](training/migrations/README.md) |
 | Demo data and management commands | Synthetic example for an existing account | [management](training/management/README.md) |
 | User interface and forms | Hungarian, server-rendered coach screens | [templates](templates/README.md) |
 | Styling | One responsive stylesheet | [static](static/README.md) |
 | Athlete memory and MCP server | Coach entries, reviewed AI proposals, local stdio MCP server | [memory](memory/README.md) |
-| Automated checks | 40 local tests pass; CI defined | [workflows](.github/workflows/README.md) |
+| Automated checks | 50 local tests pass; CI defined | [workflows](.github/workflows/README.md) |
 | Planning and validation | Documented; market gate still open | [docs](docs/README.md) |
 | CSV and Google Sheets | CSV export, file and published-link preview | [Data transfer](docs/data-transfer/README.md) |
 
@@ -56,11 +56,11 @@ uv run python manage.py test
 
 ## Current features and limits
 
-Athlete → plan → session → prescribed set → actual performance. A coach can only access their own athletes; prescribed and actual data are stored separately. Repeating an identical log submission does not duplicate. The UI is Hungarian and phone-friendly.
+Athlete → plan → session → prescribed set → actual performance. A session that has not been logged can be moved or skipped through a proposal with a before/after view; approval creates a new plan version, and an approval based on an outdated plan is refused. A coach can only access their own athletes; prescribed and actual data are stored separately. Repeating an identical log submission does not duplicate. The UI is Hungarian and phone-friendly.
 
-Per athlete, the coach keeps a curated memory of durable facts (pain, technique issues, preferences, constraints, goals, decisions). An AI client connected through the local MCP server can read it together with recent sessions, save facts the coach explicitly asks it to remember, and propose new ones for the coach to approve.
+Per athlete, the coach keeps a curated memory of durable facts (pain, technique issues, preferences, constraints, goals, decisions). An AI client connected through the local MCP server can read it together with recent sessions, save facts the coach explicitly asks it to remember, and propose new ones, as well as session moves or skips, for the coach to approve.
 
-This is a **coach prototype** for local use with synthetic data. CSV export and a CSV / Google Sheets preview exist; approved import, a private Google connection, athlete self-service login, versioned re-planning and an in-app AI chat do not yet. Later editing of the log is not done; a different repeated submission returns a 409 conflict and keeps the earlier data.
+This is a **coach prototype** for local use with synthetic data. CSV export and a CSV / Google Sheets preview exist; approved import, a private Google connection, athlete self-service login, multi-session re-planning, load or exercise changes and an in-app AI chat do not yet. Later editing of the log is not done; a different repeated submission returns a 409 conflict and keeps the earlier data.
 
 - [Detailed status and next tasks](docs/implementation-status.md)
 - [Validation worksheet](docs/validation-template.md)

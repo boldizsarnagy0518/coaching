@@ -44,3 +44,17 @@ class TransferPreviewForm(forms.Form):
         if bool(data.get("csv_file")) == bool(data.get("sheet_url")):
             raise forms.ValidationError("Vagy CSV-fájlt válassz, vagy Google Sheets-linket adj meg.")
         return data
+
+
+class PlanChangeForm(forms.Form):
+    new_date = forms.DateField(label="Új dátum", required=False,
+        widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"))
+    reason = forms.CharField(label="Indoklás (opcionális)", max_length=300, required=False,
+        widget=forms.Textarea(attrs={"rows": 2, "maxlength": 300}))
+
+    def __init__(self, *args, kind, **kwargs):
+        super().__init__(*args, **kwargs)
+        if kind == "move":
+            self.fields["new_date"].required = True
+        else:
+            del self.fields["new_date"]
