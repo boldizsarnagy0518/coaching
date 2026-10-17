@@ -15,7 +15,7 @@ The athlete → plan → session → prescribed set → actual performance workf
 | Plan changes | Move or skip one unlogged session: proposal → before/after view → approve or reject; stale proposals are refused; history with versions | Load, volume and exercise changes; automatic suggestions |
 | Prescribed set | Free-text exercise variant, reps, kg | Exercise catalogue, swaps and target RPE |
 | Actual performance | Reps, kg, optional RPE, recording time | Later correction, separate actual session time |
-| Submission | An identical repeated request does not duplicate; conflicts return 409 | Log correction workflow |
+| Submission | An identical repeated request does not duplicate; conflicts return a 409 page with a link back to the session; every outcome is logged as an event | Log correction workflow |
 | Access | Every app view filters by the logged-in coach | Shared coaching, athlete role |
 | CSV transfer | Export and read-only CSV / Google Sheets preview | Column mapping and approved import, see [data transfer](../docs/data-transfer/README.md) |
 | Athlete page | Link to the athlete memory with active and pending counts | The memory itself lives in the [memory module](../memory/README.md) |
@@ -58,7 +58,7 @@ Run `uv run python manage.py test training` from the project root. The module's 
 - [test_transfers.py](test_transfers.py), 12 tests: CSV export and preview, URL and redirect restrictions, access control, and that the preview page shows no error on first load.
 - [test_plan_changes.py](test_plan_changes.py), 10 tests: move and skip with versioning, stale proposals, logged sessions, input rules, same-day conflict in the preview, the full view flow, access isolation and the AI proposal tool.
 
-Last local result: 36/36 passed (50/50 in the full suite including the [memory module](../memory/README.md)).
+Last local result: 36/36 passed (62/62 in the full suite including the [memory](../memory/README.md) and [operations](../ops/README.md) modules).
 
 ## Next step
 

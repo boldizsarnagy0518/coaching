@@ -10,3 +10,30 @@ dependencies = [
 
 [tool.uv]
 package = false
+
+[dependency-groups]
+dev = [
+    "coverage>=7.6",
+    "ruff>=0.6",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+# Pyflakes/pycodestyle errors, bugbear, import order, Django-specific checks, simplifications.
+select = ["E", "F", "W", "B", "I", "DJ", "UP", "SIM"]
+# Line length is not enforced: the codebase uses dense lines; lint focuses on likely bugs.
+ignore = ["DJ001", "E501"]
+
+[tool.coverage.run]
+branch = true
+source = ["coaching", "training", "memory"]
+omit = ["*/migrations/*", "manage.py", "coaching/asgi.py", "coaching/wsgi.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 85

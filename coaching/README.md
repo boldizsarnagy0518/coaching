@@ -13,6 +13,9 @@ Assembles the Django project: database, sessions, login, URL routing, templates 
 - Django login and POST-based logout; session and CSRF handling.
 - [urls.py](urls.py) wires together login, the admin site and the app modules.
 - Local development mode by default, accepting localhost host names only. The secret key comes from an environment variable or from a local, Git-ignored file.
+- [observability.py](observability.py): request ID middleware (first in the middleware list), request timing log, `log_event` for domain events, `/healthz`.
+- SQLite options: WAL journal, 20 s busy timeout, `IMMEDIATE` transactions. `COACHING_DB_PATH` overrides the database file.
+- Logging: stderr, plus a rotating file in `.local/logs/` in local debug mode (`COACHING_LOG_FILE`, `DJANGO_LOG_LEVEL`). Basic security headers are set. Details: [operations](../ops/README.md).
 
 **Not done:** production deployment configuration, athlete role, self-service registration and password reset. The `createsuperuser` command used in the README also grants admin rights; it is a developer convenience, not the future customer account creation.
 
@@ -25,6 +28,7 @@ Assembles the Django project: database, sessions, login, URL routing, templates 
 | Django's built-in authentication | No custom password and session handling to write | Access to resources is still filtered separately |
 | Locally generated secret key | No shared development secret committed to the repo | The contents of `.local/` must not be uploaded |
 | Environment key required in non-debug mode | A configuration meant for production must not start without a secret | The switch alone does not make the system production-ready |
+| Request ID middleware first | Every later log line and error can be tied to one request | Adds a header to every response |
 | Europe/Budapest time zone | First users are in Hungary | Revisit after the move to Dublin or when users span time zones |
 
 ## Verification

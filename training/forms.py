@@ -1,5 +1,6 @@
 from django import forms
-from .models import Athlete, TrainingPlan, TrainingSession, PlannedSet, SetLog
+
+from .models import Athlete, PlannedSet, SetLog, TrainingPlan, TrainingSession
 
 
 class AthleteForm(forms.ModelForm):

@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block content %}<h1>A mentés nem történt meg</h1>
+<p class="panel">{{ message }}</p>
+{% if back_url %}<p><a class="button" href="{{ back_url }}">Vissza az edzéshez</a></p>{% endif %}{% endblock %}

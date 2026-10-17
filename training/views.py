@@ -1,5 +1,5 @@
-import uuid
 import csv
+import uuid
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -7,13 +7,25 @@ from django.db import IntegrityError, transaction
 from django.db.models import Count, Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from coaching.observability import log_event
+
 from . import plan_changes
-from .forms import AthleteForm, PlanForm, PlanChangeForm, SessionForm, PlannedSetForm, SetLogForm, TransferPreviewForm
-from .transfers import read_csv, download_sheet, safe_cell, MAX_BYTES
-from .models import (Athlete, ChangeKind, ChangeStatus, PlanChange, PlannedSet, SessionStatus, SetLog,
-    TrainingPlan, TrainingSession)
+from .forms import AthleteForm, PlanChangeForm, PlanForm, PlannedSetForm, SessionForm, SetLogForm, TransferPreviewForm
+from .models import (
+    Athlete,
+    ChangeKind,
+    ChangeStatus,
+    PlanChange,
+    PlannedSet,
+    SessionStatus,
+    SetLog,
+    TrainingPlan,
+    TrainingSession,
+)
+from .transfers import MAX_BYTES, download_sheet, read_csv, safe_cell
 
 
 @login_required
@@ -52,6 +64,11 @@ def transfer_preview(request, pk):
     response = render(request, "training/transfer.html", {"athlete": athlete, "form": form, "preview": preview})
     response["Cache-Control"] = "no-store"
     return response
+
+
+def conflict(request, message, session_id=None):
+    back_url = reverse("session", args=[session_id]) if session_id else None
+    return render(request, "training/conflict.html", {"message": message, "back_url": back_url}, status=409)
 
 
 @login_required
@@ -133,7 +150,8 @@ def set_create(request, pk):
 def log_set(request, pk):
     item = get_object_or_404(PlannedSet.objects.select_related("session"), pk=pk, session__plan__athlete__coach=request.user)
     if item.session.status == SessionStatus.SKIPPED:
-        return HttpResponse("Ez az edzés ki van hagyva, ezért nem naplózható.", status=409)
+        log_event("set_log.refused", set=item.pk, reason="session_skipped")
+        return conflict(request, "Ez az edzés ki van hagyva, ezért nem naplózható.", item.session_id)
     form = SetLogForm(request.POST if request.method == "POST" else None,
         initial={"submission_id": uuid.uuid4(), "reps": item.reps, "weight_kg": item.weight_kg})
     if request.method == "POST" and form.is_valid():
@@ -145,7 +163,12 @@ def log_set(request, pk):
         except IntegrityError:
             existing = SetLog.objects.filter(planned_set=item).first()
             if not existing or any(getattr(existing, key) != data[key] for key in ["submission_id", "reps", "weight_kg", "rpe"]):
-                return HttpResponse("Ez a sorozat vagy beküldés már mentve van. A korábbi adatot nem írtuk felül.", status=409)
+                log_event("set_log.conflict", set=item.pk)
+                return conflict(request, "Ez a sorozat vagy beküldés már mentve van. A korábbi adatot nem írtuk felül.",
+                    item.session_id)
+            log_event("set_log.duplicate_resubmission", set=item.pk)
+        else:
+            log_event("set_log.saved", set=item.pk)
         messages.success(request, "A sorozat mentve. Az előírt terv változatlan.")
         return redirect("session", pk=item.session_id)
     return render(request, "training/form.html", {"form": form, "title": f"Teljesítés · {item.exercise}"})

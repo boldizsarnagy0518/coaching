@@ -3,19 +3,68 @@
 Every function receives the coach explicitly and only touches that coach's athletes.
 The MCP layer (management command ``run_mcp_server``) wraps these for async use.
 """
+import logging
+import time
+import uuid
 from datetime import date
 
+from django.db import close_old_connections
 from django.db.models import Q
 
+from coaching.observability import log_event, request_id_var
 from training import plan_changes
 from training.models import Athlete, ChangeSource, SessionStatus, TrainingSession
 
 from . import services
 from .models import AthleteMemory, MemoryCategory, MemorySource, MemoryStatus
 
+logger = logging.getLogger("coaching.mcp")
 RECENT_SESSIONS = 5
 UPCOMING_SESSIONS = 10
 SEARCH_LIMIT = 30
+
+
+class ToolFailure(RuntimeError):
+    """An unexpected error, reported to the AI client without internal details."""
+
+
+def call_tool_safely(name, func, coach, *args, **kwargs):
+    """Run one tool call with a fresh DB connection, a correlation id, timing and error isolation.
+
+    ValueError carries a message meant for the AI client (bad id, bad date, rule violation).
+    Anything else is logged with a traceback and reported as a generic failure with a reference.
+    """
+    call_id = uuid.uuid4().hex[:12]
+    token = request_id_var.set(f"mcp-{call_id}")
+    started = time.perf_counter()
+    outcome = "ok"
+    # The MCP process is long-lived; drop connections that went stale between calls.
+    close_old_connections()
+    try:
+        result = func(coach, *args, **kwargs)
+        if isinstance(result, dict) and result.get("saved") is False:
+            outcome = "refused"
+        return result
+    except ValueError:
+        outcome = "invalid_input"
+        raise
+    except Exception as exc:
+        outcome = "error"
+        logger.exception("tool %s failed", name)
+        raise ToolFailure(f"Internal error in {name}; reference mcp-{call_id}.") from exc
+    finally:
+        log_event("mcp.tool", tool=name, outcome=outcome, duration_ms=round((time.perf_counter() - started) * 1000, 1))
+        close_old_connections()
+        request_id_var.reset(token)
+
+
+def _parse_date(value, field):
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{field} must be an ISO date (YYYY-MM-DD).") from exc
 
 
 def _athlete(coach, athlete_id):
@@ -83,7 +132,7 @@ def search_memories(coach, query, athlete_id=None, include_resolved=True):
 def _write(coach, athlete_id, source, category, content, exercise="", reason="", observed_on=None):
     athlete = _athlete(coach, athlete_id)
     data = services.MemoryInput(category=category, content=content, exercise=exercise or "",
-        reason=reason or "", observed_on=date.fromisoformat(observed_on) if observed_on else None)
+        reason=reason or "", observed_on=_parse_date(observed_on, "observed_on"))
     try:
         memory = services.create_memory(coach, athlete, data, source)
     except services.DuplicateMemoryError as exc:
@@ -110,7 +159,7 @@ def propose_session_change(coach, athlete_id, session_id, kind, reason, new_date
     except TrainingSession.DoesNotExist as exc:
         raise ValueError(f"No session with id {session_id} for this athlete.") from exc
     try:
-        change = plan_changes.propose(coach, session, kind, date.fromisoformat(new_date) if new_date else None,
+        change = plan_changes.propose(coach, session, kind, _parse_date(new_date, "new_date"),
             reason, source=ChangeSource.AI)
     except plan_changes.PlanChangeError as exc:
         return {"saved": False, "reason": str(exc)}

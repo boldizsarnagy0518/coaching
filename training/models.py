@@ -2,7 +2,7 @@ import uuid
 from decimal import Decimal
 
 from django.conf import settings
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -28,6 +28,9 @@ class TrainingPlan(models.Model):
     class Meta:
         ordering = ["-created_at", "-pk"]
 
+    def __str__(self):
+        return f"{self.title} (v{self.version})"
+
 
 class SessionStatus(models.TextChoices):
     PLANNED = "planned", "Tervezett"
@@ -42,6 +45,9 @@ class TrainingSession(models.Model):
 
     class Meta:
         ordering = ["scheduled_date", "pk"]
+
+    def __str__(self):
+        return f"{self.title} · {self.scheduled_date.isoformat()}"
 
 
 class ChangeKind(models.TextChoices):
@@ -92,6 +98,9 @@ class PlanChange(models.Model):
                 name="plan_change_new_date_matches_kind"),
         ]
 
+    def __str__(self):
+        return f"#{self.pk} {self.kind} session={self.session_id} ({self.status})"
+
 
 class PlannedSet(models.Model):
     session = models.ForeignKey(TrainingSession, related_name="sets", on_delete=models.PROTECT)
@@ -105,6 +114,9 @@ class PlannedSet(models.Model):
             models.CheckConstraint(condition=models.Q(reps__gte=1, reps__lte=100), name="planned_reps_range"),
             models.CheckConstraint(condition=models.Q(weight_kg__gte=0), name="planned_weight_nonnegative"),
         ]
+
+    def __str__(self):
+        return f"{self.exercise} {self.weight_kg} kg x {self.reps}"
 
 
 class SetLog(models.Model):
@@ -123,3 +135,6 @@ class SetLog(models.Model):
             models.CheckConstraint(condition=models.Q(weight_kg__gte=0), name="actual_weight_nonnegative"),
             models.CheckConstraint(condition=models.Q(rpe__isnull=True) | models.Q(rpe__gte=1, rpe__lte=10), name="actual_rpe_range"),
         ]
+
+    def __str__(self):
+        return f"{self.weight_kg} kg x {self.reps} (set {self.planned_set_id})"

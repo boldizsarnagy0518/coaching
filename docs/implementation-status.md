@@ -29,7 +29,11 @@ Per-athlete curated memory with fixed categories, near-duplicate rejection, reas
 
 Plans have a version number; a session without logged sets can be moved or skipped through a proposal with a before/after view and coach approval. Approving a proposal based on an outdated version marks it stale; skipped sessions cannot be logged. The AI can propose such changes through the MCP server, but cannot apply them. [State and decisions](../training/README.md).
 
-**Verification:** 50 local tests passed; the online download is tested with a simulated response; a manual stdio smoke test of the MCP server succeeded. Real use in an AI client has not been tried yet.
+**Testability, observability and stability**
+
+Lint (ruff) and branch coverage with an 85% gate in CI; request IDs, request and domain event logs without personal text; public `/healthz`; SQLite WAL with busy timeout and immediate write transactions for the web and MCP processes; verified backups with retention and a timeout; error-isolated MCP tool calls; Hungarian 404/500 pages and a 409 conflict page; basic security headers. [State and decisions](../ops/README.md).
+
+**Verification:** 62 local tests passed (94% branch coverage); the online download is tested with a simulated response; a manual stdio smoke test of the MCP server succeeded. Real use in an AI client has not been tried yet.
 
 This is a technical foundation brought forward at the user's request. It does not prove that the validation gate has been met, and it does not mean all tasks of weeks 6–10 are complete.
 
@@ -47,9 +51,10 @@ This is a technical foundation brought forward at the user's request. It does no
 2. Changing the number of training days (e.g. 3 → 4) as one multi-session proposal.
 3. Versioned prescriptions, so load and exercise swaps can use the same approval flow.
 4. Trying the MCP server in a real AI client with synthetic data and tuning the memory rules.
+5. Scheduled backups with an off-machine copy and a recorded restore drill.
 
 ## Not done yet
 
-Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; multi-session re-planning; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; editing memory entries; billing; public deployment; operational backup and restore and a complete data-handling process.
+Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; multi-session re-planning; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; editing memory entries; billing; public deployment; scheduled off-machine backups and a tested restore; load testing; a complete data-handling process.
 
 The current UI is built for coaches: the coach records the athlete's data. The app does not change loads automatically and gives no injury-management advice. It is not yet suitable for running a live service with real athlete data.

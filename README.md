@@ -15,7 +15,8 @@ Updated: 17 October 2026. A local coach training-log prototype with a curated at
 | User interface and forms | Hungarian, server-rendered coach screens | [templates](templates/README.md) |
 | Styling | One responsive stylesheet | [static](static/README.md) |
 | Athlete memory and MCP server | Coach entries, reviewed AI proposals, local stdio MCP server | [memory](memory/README.md) |
-| Automated checks | 50 local tests pass; CI defined | [workflows](.github/workflows/README.md) |
+| Operations | Request IDs and logs, domain events, `/healthz`, SQLite WAL, verified backups, error pages | [ops](ops/README.md) |
+| Automated checks | 62 local tests pass, 94% branch coverage, lint; CI defined | [workflows](.github/workflows/README.md) |
 | Planning and validation | Documented; market gate still open | [docs](docs/README.md) |
 | CSV and Google Sheets | CSV export, file and published-link preview | [Data transfer](docs/data-transfer/README.md) |
 
@@ -49,10 +50,14 @@ Open http://127.0.0.1:8765 and log in with the account you created. Loading demo
 ## Verification
 
 ```powershell
+uv run ruff check .
 uv run python manage.py check
 uv run python manage.py makemigrations --check --dry-run
-uv run python manage.py test
+uv run coverage run manage.py test
+uv run coverage report
 ```
+
+`coverage report` fails below 85% branch coverage. Backups: `uv run python manage.py backup_db`; health check: `/healthz`. Details in the [operations README](ops/README.md).
 
 ## Current features and limits
 

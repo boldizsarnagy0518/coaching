@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 
+from coaching.observability import log_event
 from memory import mcp_tools
 
 INSTRUCTIONS = f"""You assist a powerlifting coach. This server gives access to the coach's athletes,
@@ -37,8 +38,10 @@ def build_server(coach):
     server = FastMCP("coaching-memory", instructions=INSTRUCTIONS)
 
     def run(func, *args, **kwargs):
-        # Django ORM calls must run outside the event loop thread.
-        return sync_to_async(func, thread_sensitive=True)(coach, *args, **kwargs)
+        # Django ORM calls must run outside the event loop thread; call_tool_safely adds logging,
+        # connection hygiene and error isolation.
+        return sync_to_async(mcp_tools.call_tool_safely, thread_sensitive=True)(
+            func.__name__, func, coach, *args, **kwargs)
 
     @server.tool(annotations=READ_ONLY)
     async def list_athletes() -> list[dict]:
@@ -94,5 +97,6 @@ class Command(BaseCommand):
             coach = get_user_model().objects.get(username=options["coach"], is_active=True)
         except get_user_model().DoesNotExist as exc:
             raise CommandError("Unknown or inactive coach username.") from exc
-        # stdout carries the MCP protocol; never print anything else to it.
+        # stdout carries the MCP protocol; never print anything else to it (logs go to stderr/file).
+        log_event("mcp.server_started", coach=coach.pk)
         build_server(coach).run("stdio")

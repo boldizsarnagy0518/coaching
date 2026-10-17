@@ -1,15 +1,17 @@
 import csv
 import io
-from unittest.mock import patch, MagicMock
-from django.test import SimpleTestCase, TestCase
-from django.contrib.auth import get_user_model
-from datetime import date
 import uuid
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
-from .models import SetLog, TrainingPlan, Athlete, TrainingSession, PlannedSet
-from .transfers import read_csv, safe_cell, published_sheet_url, download_sheet, GoogleRedirects, MAX_BYTES
+from datetime import date
+from unittest.mock import MagicMock, patch
 from urllib.request import Request
+
+from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import SimpleTestCase, TestCase
+from django.urls import reverse
+
+from .models import Athlete, PlannedSet, SetLog, TrainingPlan, TrainingSession
+from .transfers import MAX_BYTES, GoogleRedirects, download_sheet, published_sheet_url, read_csv, safe_cell
 
 
 class CsvTests(SimpleTestCase):

@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from django.db import transaction
 from django.utils import timezone
 
+from coaching.observability import log_event
+
 from .models import ChangeKind, ChangeSource, ChangeStatus, PlanChange, SessionStatus, TrainingPlan, TrainingSession
 
 MAX_PENDING_CHANGES = 10
@@ -59,9 +61,12 @@ def propose(coach, session, kind, new_date=None, reason="", source=ChangeSource.
         raise PlanChangeError("Túl sok jóváhagyásra váró módosítás; előbb nézd át őket.")
     if plan.changes.filter(status=ChangeStatus.PROPOSED, session=session).exists():
         raise PlanChangeError("Erre az edzésre már van jóváhagyásra váró módosítás.")
-    return PlanChange.objects.create(plan=plan, session=session, kind=kind, new_date=new_date,
+    change = PlanChange.objects.create(plan=plan, session=session, kind=kind, new_date=new_date,
         old_date=session.scheduled_date, base_version=plan.version, reason=reason[:300], source=source,
         created_by=coach)
+    log_event("plan_change.proposed", change=change.pk, plan=plan.pk, session=session.pk, kind=kind, source=source,
+        base_version=plan.version)
+    return change
 
 
 def preview(change):
@@ -115,6 +120,8 @@ def _apply(coach, change):
     if error:
         change.status = ChangeStatus.STALE
         change.save(update_fields=["status", "reviewed_by", "reviewed_at"])
+        log_event("plan_change.stale", change=change.pk, plan=plan.pk, base_version=change.base_version,
+            plan_version=plan.version)
         return error
     if change.kind == ChangeKind.MOVE:
         session.scheduled_date = change.new_date
@@ -126,6 +133,7 @@ def _apply(coach, change):
     change.status = ChangeStatus.APPROVED
     change.result_version = plan.version
     change.save(update_fields=["status", "reviewed_by", "reviewed_at", "result_version"])
+    log_event("plan_change.approved", change=change.pk, plan=plan.pk, version=plan.version)
     return None
 
 
@@ -133,4 +141,5 @@ def reject(coach, change):
     _review(coach, change)
     change.status = ChangeStatus.REJECTED
     change.save(update_fields=["status", "reviewed_by", "reviewed_at"])
+    log_event("plan_change.rejected", change=change.pk, plan=change.plan_id)
     return change

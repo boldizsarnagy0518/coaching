@@ -11,6 +11,9 @@ jobs:
         with:
           version: "0.8.14"
       - run: uv sync --locked --python 3.12
+      - run: uv run ruff check .
       - run: uv run python manage.py check
       - run: uv run python manage.py makemigrations --check --dry-run
-      - run: uv run python manage.py test
+      - run: uv run coverage run manage.py test
+      # Fails the job below the threshold configured in pyproject.toml.
+      - run: uv run coverage report

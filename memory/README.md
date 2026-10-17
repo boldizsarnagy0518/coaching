@@ -62,10 +62,11 @@ Tools: `list_athletes`, `get_athlete_context` (active memories, pending count, l
 | MCP instead of an in-app chat first | The idea can be tried in an existing AI client without building a chat UI or managing API keys | Requires a desktop AI client; not usable by athletes |
 | Business rules in `services.py`, thin MCP layer | The web UI and the AI follow exactly the same rules | New write paths must call the services, not the model directly |
 | ORM calls wrapped with `sync_to_async` | FastMCP runs tools in an event loop; Django's ORM is synchronous | Tool logic stays testable as plain functions |
+| Every tool call goes through `call_tool_safely` | A long-running process needs fresh DB connections, a correlation id, timing and error isolation | Unexpected errors reach the AI only as a generic message with a reference; see [operations](../ops/README.md) |
 
 ## Verification
 
-`uv run python manage.py test memory`: 14 tests covering the selection rules, review transitions, coach isolation in views and tools, the athlete-page counter and an end-to-end tool call through the FastMCP server. Last local result: all passed (50/50 in the full suite).
+`uv run python manage.py test memory`: 14 tests covering the selection rules, review transitions, coach isolation in views and tools, the athlete-page counter and an end-to-end tool call through the FastMCP server. Last local result: all passed (62/62 in the full suite). MCP error handling is tested in [ops/tests.py](../ops/tests.py).
 
 A manual stdio smoke test with the official MCP Python client (initialize, list tools, call `list_athletes`) succeeded against a temporary local account that was removed afterwards. Trying it in Claude Desktop with real conversations has not been done yet.
 

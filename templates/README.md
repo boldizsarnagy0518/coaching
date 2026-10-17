@@ -11,6 +11,8 @@ The HTML screens served by Django. Input validation and data isolation are the b
 | File | Screen |
 |---|---|
 | [base.html](base.html) | Header, logout, status messages, shared layout |
+| [404.html](404.html), [500.html](500.html) | Error pages; the 500 page is standalone so it renders even if the layout fails |
+| [training/conflict.html](training/conflict.html) | 409 page when a log submission would overwrite earlier data or the session is skipped |
 | [registration/login.html](registration/login.html) | Coach login |
 | [training/dashboard.html](training/dashboard.html) | Own athletes and number of plans |
 | [training/athlete.html](training/athlete.html) | One athlete's plans |
@@ -31,7 +33,7 @@ The HTML screens served by Django. Input validation and data isolation are the b
 | Shared layout and form template | New screens stay consistent with less duplicated code | A specialised logging experience is a later refinement |
 | Prescription and actual value shown together | The difference can be checked | No trend or professional evaluation yet |
 | Redirect after save | The user sees the saved state | Protection against resubmission is provided by the backend in addition |
-| Success message only after a save or an identical resubmission | Invalid data must not look successfully recorded | A conflict currently returns a plain 409 text response |
+| Success message only after a save or an identical resubmission | Invalid data must not look successfully recorded | A conflict shows a 409 page with a link back |
 
 ## Verification
 

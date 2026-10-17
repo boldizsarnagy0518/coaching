@@ -14,6 +14,7 @@ from difflib import SequenceMatcher
 from django.db import transaction
 from django.utils import timezone
 
+from coaching.observability import log_event
 from training.models import Athlete
 
 from .models import AthleteMemory, MemoryCategory, MemorySource, MemoryStatus
@@ -93,13 +94,21 @@ def create_memory(coach, athlete, data, source):
         raise PermissionError("Athlete does not belong to this coach.")
     # Lock the athlete row so concurrent writes see each other's duplicates and pending counts.
     Athlete.objects.select_for_update().get(pk=athlete.pk)
-    content, reason = _validate(athlete, data, source)
+    try:
+        content, reason = _validate(athlete, data, source)
+    except MemoryRuleError as exc:
+        rule = "duplicate" if isinstance(exc, DuplicateMemoryError) else "invalid"
+        log_event("memory.refused", athlete=athlete.pk, source=source, category=data.category, rule=rule)
+        raise
     status = MemoryStatus.PROPOSED if source == MemorySource.AI_PROPOSAL else MemoryStatus.ACTIVE
-    return AthleteMemory.objects.create(
+    memory = AthleteMemory.objects.create(
         athlete=athlete, category=data.category, content=content, exercise=data.exercise.strip()[:120],
         reason=reason, observed_on=data.observed_on or timezone.localdate(), status=status, source=source,
         created_by=coach,
     )
+    log_event("memory.created", memory=memory.pk, athlete=athlete.pk, source=source, status=status,
+        category=data.category)
+    return memory
 
 
 def _review(coach, memory, allowed_from, new_status):
@@ -111,6 +120,7 @@ def _review(coach, memory, allowed_from, new_status):
     memory.reviewed_by = coach
     memory.reviewed_at = timezone.now()
     memory.save(update_fields=["status", "reviewed_by", "reviewed_at"])
+    log_event("memory.reviewed", memory=memory.pk, athlete=memory.athlete_id, status=new_status)
     return memory
 
 

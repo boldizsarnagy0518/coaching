@@ -13,3 +13,6 @@ media/
 .ruff_cache/
 staticfiles/
 *.log
+.coverage
+.coverage.*
+htmlcov/

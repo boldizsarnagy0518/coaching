@@ -2,9 +2,9 @@
 import csv
 import io
 import re
-from urllib.parse import urlsplit, parse_qs, urlencode
-from urllib.request import Request, HTTPRedirectHandler, build_opener
 from urllib.error import URLError
+from urllib.parse import parse_qs, urlencode, urlsplit
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 MAX_BYTES = 1_000_000
 MAX_ROWS = 2000
