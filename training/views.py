@@ -83,8 +83,25 @@ def conflict(request, message, session_id=None):
 
 @login_required
 def dashboard(request):
-    athletes = Athlete.objects.filter(coach=request.user).annotate(plan_count=Count("plans"))
-    return render(request, "training/dashboard.html", {"athletes": athletes})
+    athletes = list(_with_counts(Athlete.objects.filter(coach=request.user)))
+    for athlete in athletes:
+        # A batch reschedule is one decision for the coach, so it counts once.
+        athlete.pending_change_count = athlete.pending_single_count + athlete.pending_batch_count
+    attention_total = sum(a.pending_change_count + a.proposed_memory_count for a in athletes)
+    return render(request, "training/dashboard.html", {"athletes": athletes, "attention_total": attention_total})
+
+
+def _with_counts(athletes):
+    """Plan, memory and pending-change counts; distinct=True because the joins multiply rows."""
+    pending = Q(plans__changes__status=ChangeStatus.PROPOSED)
+    return athletes.annotate(
+        plan_count=Count("plans", distinct=True),
+        active_memory_count=Count("memories", filter=Q(memories__status="active"), distinct=True),
+        proposed_memory_count=Count("memories", filter=Q(memories__status="proposed"), distinct=True),
+        pending_single_count=Count("plans__changes", filter=pending & Q(plans__changes__batch__isnull=True),
+            distinct=True),
+        pending_batch_count=Count("plans__changes__batch", filter=pending, distinct=True),
+    )
 
 
 def save_form(request, form_class, title, relation, destination):
@@ -105,12 +122,14 @@ def athlete_create(request):
 
 @login_required
 def athlete_detail(request, pk):
-    athletes = Athlete.objects.annotate(
-        active_memory_count=Count("memories", filter=Q(memories__status="active")),
-        proposed_memory_count=Count("memories", filter=Q(memories__status="proposed")),
-    )
-    athlete = get_object_or_404(athletes, pk=pk, coach=request.user)
-    return render(request, "training/athlete.html", {"athlete": athlete})
+    athlete = get_object_or_404(_with_counts(Athlete.objects.all()), pk=pk, coach=request.user)
+    pending = Q(changes__status=ChangeStatus.PROPOSED)
+    plans = list(athlete.plans.annotate(session_count=Count("sessions", distinct=True),
+        pending_singles=Count("changes", filter=pending & Q(changes__batch__isnull=True), distinct=True),
+        pending_batches=Count("changes__batch", filter=pending, distinct=True)))
+    for plan in plans:
+        plan.pending_count = plan.pending_singles + plan.pending_batches
+    return render(request, "training/athlete.html", {"athlete": athlete, "plans": plans})
 
 
 @login_required
@@ -129,7 +148,9 @@ def plan_detail(request, pk):
         if change.status == ChangeStatus.PROPOSED and (change.batch is None or change.batch not in seen_batches):
             seen_batches.add(change.batch)
             pending.append(change)
-    return render(request, "training/plan.html", {"plan": plan, "pending": pending,
+    sessions = plan.sessions.annotate(total=Count("sets", distinct=True),
+        logged=Count("sets", filter=Q(sets__performance__isnull=False), distinct=True))
+    return render(request, "training/plan.html", {"plan": plan, "pending": pending, "sessions": sessions,
         "history": [c for c in changes if c.status != ChangeStatus.PROPOSED]})
 
 

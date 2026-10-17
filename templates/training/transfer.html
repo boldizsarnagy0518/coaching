@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-<a href="{% url 'athlete' athlete.pk %}">← {{ athlete.name }}</a>
-<h1>CSV és Google Sheets</h1>
-<p>Az előnézet ellenőrzi a táblázat szerkezetét. Edzéstervet még nem ment és nem módosít.</p>
+<a class="back" href="{% url 'athlete' athlete.pk %}">← {{ athlete.name }}</a>
+<div class="page-head"><div><h1>CSV és Google Sheets</h1><p>Az előnézet ellenőrzi a táblázat szerkezetét. Edzéstervet még nem ment és nem módosít.</p></div></div>
 <section class="panel narrow">
 <p><strong>Letöltött fájl:</strong> Google Sheets → Fájl → Letöltés → vesszővel tagolt értékek (.csv), az aktuális munkalapból.</p>
 <p><strong>Online lekérés:</strong> már publikált, CSV-formátumú Google Sheets-linkkel. A gép csak az Előnézet gomb megnyomásakor tölti le az aktuális adatot.</p>
@@ -10,7 +9,7 @@
 <form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button type="submit">Előnézet</button></form>
 </section>
 {% if preview %}<h2>{{ preview.row_count }} adatsor · első legfeljebb 20 sor</h2>
-<div class="panel" style="overflow-x:auto"><table><thead><tr>{% for header in preview.headers %}<th scope="col">{{ header }}</th>{% endfor %}</tr></thead>
+<div class="table-wrap"><table><thead><tr>{% for header in preview.headers %}<th scope="col">{{ header }}</th>{% endfor %}</tr></thead>
 <tbody>{% for row in preview.rows %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
 <p>Az oszlopok hozzárendelése és a jóváhagyott import még nincs kész. Az előnézethez feltöltött fájlt és linket nem tároljuk az alkalmazás adatbázisában.</p>{% endif %}
 {% endblock %}

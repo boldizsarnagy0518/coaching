@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
-{% block content %}<a href="{% url 'dashboard' %}">← Sportolók</a>
-<div class="page-heading"><div><h1>{{ athlete.name }}</h1><p>Edzéstervek</p></div><a class="button" href="{% url 'plan-create' athlete.pk %}">+ Új terv</a></div>
-<p><a class="button" href="{% url 'athlete-memory' athlete.pk %}">Emlékek · {{ athlete.active_memory_count }} aktív{% if athlete.proposed_memory_count %} · {{ athlete.proposed_memory_count }} javaslat{% endif %}</a></p>
-<p><a href="{% url 'export-csv' athlete.pk %}">Napló letöltése CSV-ben</a> · <a href="{% url 'transfer-preview' athlete.pk %}">CSV / Google Sheets előnézet</a></p>
-<div class="grid">{% for plan in athlete.plans.all %}<a class="panel card" href="{% url 'plan' plan.pk %}"><h2>{{ plan.title }}</h2><span>Edzések megnyitása →</span></a>{% empty %}<p class="panel">Még nincs rögzített terv.</p>{% endfor %}</div>{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'dashboard' %}">← Sportolók</a>
+<div class="page-head"><div><h1>{{ athlete.name }}</h1></div>
+<div class="actions"><a class="button quiet" href="{% url 'athlete-memory' athlete.pk %}">Emlékek · {{ athlete.active_memory_count }} aktív{% if athlete.proposed_memory_count %} · {{ athlete.proposed_memory_count }} javaslat{% endif %}</a>
+<a class="button" href="{% url 'plan-create' athlete.pk %}">Új terv</a></div></div>
+<h2>Tervek</h2>
+{% if plans %}<ul class="list">{% for plan in plans %}<li><a class="row" href="{% url 'plan' plan.pk %}">
+<span><span class="row-title">{{ plan.title }}</span><br><span class="row-meta">{{ plan.session_count }} edzés · {{ plan.version }}. verzió</span></span>
+<span>{% if plan.pending_count %}<span class="tag attention">{{ plan.pending_count }} módosítás vár</span>{% endif %}</span>
+</a></li>{% endfor %}</ul>
+{% else %}<p class="empty">Még nincs terv ennél a sportolónál.</p>{% endif %}
+<p class="muted"><a href="{% url 'export-csv' athlete.pk %}">Napló letöltése CSV-ben</a> · <a href="{% url 'transfer-preview' athlete.pk %}">CSV / Google Sheets előnézet</a></p>
+{% endblock %}

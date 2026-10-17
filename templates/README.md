@@ -10,14 +10,14 @@ The HTML screens served by Django. Input validation and data isolation are the b
 
 | File | Screen |
 |---|---|
-| [base.html](base.html) | Header, logout, status messages, shared layout |
+| [base.html](base.html) | Header with brand, athlete link and logout, prototype note, status messages |
 | [404.html](404.html), [500.html](500.html) | Error pages; the 500 page is standalone so it renders even if the layout fails |
 | [training/conflict.html](training/conflict.html) | 409 page when a log submission would overwrite earlier data or the session is skipped |
-| [registration/login.html](registration/login.html) | Coach login |
-| [training/dashboard.html](training/dashboard.html) | Own athletes and number of plans |
-| [training/athlete.html](training/athlete.html) | One athlete's plans |
-| [training/plan.html](training/plan.html) | Sessions of one plan, version number, reschedule button, pending changes (a batch listed once), change history |
-| [training/session.html](training/session.html) | Prescribed and actual sets, number of logged sets, move/skip buttons or the remaining-sets button for a partial session, skipped notice |
+| [registration/login.html](registration/login.html) | Coach login with a one-line description of what the app holds |
+| [training/dashboard.html](training/dashboard.html) | Athlete list with plan and memory counts and red tags for pending changes and memory proposals; total items waiting in the header |
+| [training/athlete.html](training/athlete.html) | One athlete: memory button, plan list with session count, version and pending changes, CSV links |
+| [training/plan.html](training/plan.html) | Dated session list with logged/total or status tags, version number, reschedule button, pending changes (a batch listed once), change history |
+| [training/session.html](training/session.html) | Table of prescribed vs actual sets (kg × reps, RPE) with a log button per row, logged count, move/skip buttons or the remaining-sets button for a partial session, skipped notice |
 | [training/plan_change.html](training/plan_change.html) | One change or a whole batch: before/after table with notes (kept/moved sets, new continuation session), same-day conflict, approve/reject |
 | [training/form.html](training/form.html) | Shared data entry form; views can set the back link, an intro line and the submit label (also used for the reschedule form, one date per session) |
 | [training/transfer.html](training/transfer.html) | CSV / Google Sheets structural preview |
@@ -29,6 +29,7 @@ The HTML screens served by Django. Input validation and data isolation are the b
 
 | Decision | Why? | Consequence / limit |
 |---|---|---|
+| Lists and tables instead of card grids; concrete wording instead of slogans | Coaches scan and compare; generic card grids and slogans read as template/AI output (see [static](../static/README.md)) | Each new screen needs its own specific wording |
 | Server-rendered HTML | The first data path of a side project needs fewer separate technologies | Every action currently needs a server connection |
 | Shared layout and form template | New screens stay consistent with less duplicated code | A specialised logging experience is a later refinement |
 | Prescription and actual value shown together | The difference can be checked | No trend or professional evaluation yet |
@@ -37,7 +38,7 @@ The HTML screens served by Django. Input validation and data isolation are the b
 
 ## Verification
 
-The [functional tests](../training/tests.py) and the [memory tests](../memory/tests.py) check responses, the displayed saved state, partial logging and HTML escaping. The login page has been checked over HTTP. A full browser, mobile and accessibility test has not been verified; the previous browser trial was interrupted by a tooling error.
+The [functional tests](../training/tests.py) and the [memory tests](../memory/tests.py) check responses, the displayed saved state, partial logging and HTML escaping. Browser checks on the demo database: the main flows at 375 px (17 October 2026), and after the redesign the dashboard, plan, session table, memory page and change preview at 375 px light/dark and 1280 px. A real-device and accessibility audit has not been done.
 
 ## Next step
 

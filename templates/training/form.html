@@ -1,3 +1,6 @@
 {% extends 'base.html' %}
-{% block content %}<a href="{{ back_url|default:'/' }}">← {{ back_label|default:'Sportolók' }}</a><h1>{{ title }}</h1>{% if intro %}<p class="muted">{{ intro }}</p>{% endif %}
-<section class="panel narrow"><form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">{{ submit_label|default:'Mentés' }}</button></form></section>{% endblock %}
+{% block content %}
+<a class="back" href="{{ back_url|default:'/' }}">← {{ back_label|default:'Sportolók' }}</a>
+<div class="page-head"><div><h1>{{ title }}</h1>{% if intro %}<p>{{ intro }}</p>{% endif %}</div></div>
+<section class="panel narrow"><form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">{{ submit_label|default:'Mentés' }}</button></form></section>
+{% endblock %}

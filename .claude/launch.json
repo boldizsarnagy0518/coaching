@@ -4,7 +4,7 @@
     {
       "name": "coaching-demo",
       "runtimeExecutable": "powershell",
-      "runtimeArgs": ["-NoProfile", "-Command", "$env:COACHING_DB_PATH = '.local/demo.sqlite3'; uv run python manage.py runserver 127.0.0.1:8765 --noreload"],
+      "runtimeArgs": ["-NoProfile", "-Command", "$env:COACHING_DB_PATH = '.local/demo.sqlite3'; uv run python manage.py runserver 127.0.0.1:8765"],
       "port": 8765
     }
   ]

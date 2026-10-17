@@ -1,18 +1,23 @@
-{% load static %}
-<!doctype html>
+{% load static %}<!doctype html>
 <html lang="hu">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{% block title %}Coaching · Edzésnapló{% endblock %}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Edzésnapló{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'app.css' %}">
 </head>
 <body>
-<header><a class="brand" href="{% url 'dashboard' %}">COACHING<span>Erőemelő edzésnapló</span></a>
-{% if user.is_authenticated %}<form method="post" action="{% url 'logout' %}">{% csrf_token %}<span class="user">{{ user.username }}</span><button class="quiet" type="submit">Kilépés</button></form>{% endif %}</header>
+<header class="site-header">
+  <a class="brand" href="{% url 'dashboard' %}">Edzésnapló</a>
+  {% if user.is_authenticated %}<nav>
+    <a href="{% url 'dashboard' %}">Sportolók</a>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<span class="user muted">{{ user.username }}</span> <button class="link-button" type="submit">Kilépés</button></form>
+  </nav>{% endif %}
+</header>
+<p class="prototype-note">Prototípus – csak kitalált, tesztadatokkal használd.</p>
 <main>
-  <p class="eyebrow">Belső prototípus · szintetikus tesztadatokhoz</p>
-  {% for message in messages %}<p class="notice" role="status">{{ message }}</p>{% endfor %}
+  {% for message in messages %}<p class="notice{% if message.tags == 'error' %} warning{% endif %}" role="status">{{ message }}</p>{% endfor %}
   {% block content %}{% endblock %}
 </main>
-<footer>A terv és az elvégzett munka külön történet.</footer>
-</body></html>
+</body>
+</html>

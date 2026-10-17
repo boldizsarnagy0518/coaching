@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
+{% block title %}Belépés · Edzésnapló{% endblock %}
 {% block content %}
-<section class="intro"><h1>Átlátható edzői munka.</h1><p>Sportolók, tervek és tényleges teljesítés egy helyen.</p></section>
-<section class="panel narrow"><h2>Edzői bejelentkezés</h2>
+<div class="page-head"><div><h1>Belépés</h1><p>Edzőknek: sportolók, tervek, naplózott sorozatok és a jóváhagyásra váró módosítások.</p></div></div>
+<section class="panel narrow">
 <form method="post">{% csrf_token %}{{ form.as_p }}<input type="hidden" name="next" value="{{ next }}"><button type="submit">Belépés</button></form>
-<p class="muted">A hozzáférést a prototípus kezelője hozza létre.</p></section>
+<p class="muted">Fiókot a prototípus kezelője hoz létre.</p>
+</section>
 {% endblock %}

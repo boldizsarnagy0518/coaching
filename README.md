@@ -12,11 +12,11 @@ Updated: 17 October 2026. A local coach training-log prototype with a curated at
 | Athletes, plans and logging | Data flow, plan versions, move/skip/remaining-sets/batch reschedule proposals with approval | [training](training/README.md) |
 | Database schema | Three training migrations; the memory app has its own | [migrations](training/migrations/README.md) |
 | Demo data and management commands | Synthetic example for an existing account | [management](training/management/README.md) |
-| User interface and forms | Hungarian, server-rendered coach screens | [templates](templates/README.md) |
-| Styling | One responsive stylesheet | [static](static/README.md) |
+| User interface and forms | Hungarian, server-rendered coach screens; lists and tables, attention tags | [templates](templates/README.md) |
+| Styling | "Training logbook" look: paper and ink, one signal colour, light/dark, phone-first | [static](static/README.md) |
 | Athlete memory and MCP server | Coach entries, reviewed AI proposals, local stdio MCP server | [memory](memory/README.md) |
 | Operations | Request IDs and logs, domain events, `/healthz`, SQLite WAL, verified backup and restore, backup scheduling script, demo login | [ops](ops/README.md) |
-| Automated checks | 80 local tests pass, 95% branch coverage, lint; CI defined | [workflows](.github/workflows/README.md) |
+| Automated checks | 81 local tests pass, 95% branch coverage, lint; CI defined | [workflows](.github/workflows/README.md) |
 | Planning and validation | Documented; market gate still open | [docs](docs/README.md) |
 | CSV and Google Sheets | CSV export, file and published-link preview | [Data transfer](docs/data-transfer/README.md) |
 

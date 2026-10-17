@@ -67,7 +67,7 @@ Tools: `list_athletes`, `get_athlete_context` (active memories, pending count, l
 
 ## Verification
 
-`uv run python manage.py test memory`: 17 tests covering the selection rules, review transitions, editing (rules, self-exclusion from the duplicate check, closed entries, other coaches), coach isolation in views and tools, the athlete-page counter and an end-to-end tool call through the FastMCP server. Last local result: all passed (80/80 in the full suite). MCP error handling is tested in [ops/tests.py](../ops/tests.py).
+`uv run python manage.py test memory`: 17 tests covering the selection rules, review transitions, editing (rules, self-exclusion from the duplicate check, closed entries, other coaches), coach isolation in views and tools, the athlete-page counter and an end-to-end tool call through the FastMCP server. Last local result: all passed (81/81 in the full suite). MCP error handling is tested in [ops/tests.py](../ops/tests.py).
 
 A manual stdio smoke test with the official MCP Python client (initialize, list tools, call `list_athletes`) succeeded against a temporary local account that was removed afterwards. Trying it in Claude Desktop with real conversations has not been done yet.
 

@@ -35,7 +35,11 @@ Lint (ruff) and branch coverage with an 85% gate in CI; request IDs, request and
 
 Restore command with a safety copy and a recorded restore drill; a backup scheduling script (tried, then unregistered at the user's request; backups are manual); a demo login command; a browser check of the main flows at phone width.
 
-**Verification:** 80 local tests passed (95% branch coverage); the multi-process concurrency check passed after these changes; the online download is tested with a simulated response; a manual stdio smoke test of the MCP server succeeded. Real use in an AI client has not been tried yet.
+**Interface redesign**
+
+A "training logbook" look chosen to avoid generic AI-generated UI patterns: paper-and-ink colours with one signal colour for pending items, condensed headings, tabular figures, lists and a real set table instead of card grids, concrete wording, light and dark mode. The dashboard now shows how many changes and memory proposals wait per athlete. [State and decisions](../static/README.md).
+
+**Verification:** 81 local tests passed (95% branch coverage); the multi-process concurrency check passed after these changes; the online download is tested with a simulated response; a manual stdio smoke test of the MCP server succeeded. Real use in an AI client has not been tried yet.
 
 This is a technical foundation brought forward at the user's request. It does not prove that the validation gate has been met, and it does not mean all tasks of weeks 6–10 are complete.
 

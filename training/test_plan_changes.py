@@ -261,3 +261,17 @@ class PartialAndBatchTests(TestCase):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
                 mcp_tools.propose_reschedule(self.coach, self.athlete.pk, bad, "Elég hosszú indoklás")
 
+    def test_dashboard_counts_a_batch_once(self):
+        from memory import services
+        from memory.models import MemorySource
+
+        plan_changes.propose_batch(self.coach, self.plan, [(self.days[1], TODAY + timedelta(days=8)),
+            (self.days[2], TODAY + timedelta(days=9))])
+        services.create_memory(self.coach, self.athlete, services.MemoryInput("goal", "Márciusi verseny a fő cél",
+            reason="Tervezéshez kell"), MemorySource.AI_PROPOSAL)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "1 módosítás")
+        self.assertContains(response, "1 emlékjavaslat")
+        self.assertContains(response, "2 tétel vár rád")
+        self.assertContains(self.client.get(reverse("athlete", args=[self.athlete.pk])), "1 módosítás vár")
+

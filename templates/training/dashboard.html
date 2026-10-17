@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="page-heading"><div><h1>Sportolóid</h1><p>Válassz sportolót a tervek és a napló megnyitásához.</p></div><a class="button" href="{% url 'athlete-create' %}">+ Új sportoló</a></div>
-<div class="grid">{% for athlete in athletes %}<a class="panel card" href="{% url 'athlete' athlete.pk %}"><span class="eyebrow">{{ athlete.plan_count }} terv</span><h2>{{ athlete.name }}</h2><span>Megnyitás →</span></a>
-{% empty %}<div class="panel"><h2>Itt kezdődik az edzésnapló.</h2><p>Hozz létre egy tesztsportolót, majd add hozzá az első tervét.</p></div>{% endfor %}</div>
+<div class="page-head"><div><h1>Sportolók</h1><p>{{ athletes|length }} sportoló{% if attention_total %} · {{ attention_total }} tétel vár rád{% endif %}</p></div>
+<a class="button" href="{% url 'athlete-create' %}">Új sportoló</a></div>
+{% if athletes %}<ul class="list">{% for athlete in athletes %}<li><a class="row" href="{% url 'athlete' athlete.pk %}">
+<span><span class="row-title">{{ athlete.name }}</span><br><span class="row-meta">{{ athlete.plan_count }} terv · {{ athlete.active_memory_count }} aktív emlék</span></span>
+<span>{% if athlete.pending_change_count %}<span class="tag attention">{{ athlete.pending_change_count }} módosítás</span> {% endif %}{% if athlete.proposed_memory_count %}<span class="tag attention">{{ athlete.proposed_memory_count }} emlékjavaslat</span>{% endif %}</span>
+</a></li>{% endfor %}</ul>
+{% else %}<p class="empty">Még nincs sportoló. Vegyél fel egyet, majd adj hozzá egy tervet és az első edzést.</p>{% endif %}
 {% endblock %}
