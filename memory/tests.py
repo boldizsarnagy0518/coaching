@@ -172,3 +172,46 @@ class McpToolTests(TestCase):
             "save_memory_on_coach_request", "propose_session_change"})
         result = async_to_sync(server.call_tool)("list_athletes", {})
         self.assertIn("Szintetikus", str(result))
+
+
+class MemoryEditTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.coach = get_user_model().objects.create_user(username="coach-a")
+        cls.other = get_user_model().objects.create_user(username="coach-b")
+        cls.athlete = Athlete.objects.create(coach=cls.coach, name="Szintetikus")
+
+    def setUp(self):
+        self.memory = services.create_memory(self.coach, self.athlete, entry(), MemorySource.COACH)
+        self.second = services.create_memory(self.coach, self.athlete,
+            entry("Bal váll húzódik fekvenyomás alján"), MemorySource.COACH)
+
+    def test_edit_keeps_rules_and_ignores_itself_as_duplicate(self):
+        services.update_memory(self.coach, self.memory, entry("Jobb térd fáj mély guggolásnál, főleg hétfőn"))
+        self.memory.refresh_from_db()
+        self.assertEqual(self.memory.edited_by, self.coach)
+        self.assertIn("hétfőn", self.memory.content)
+        with self.assertRaises(services.DuplicateMemoryError):
+            services.update_memory(self.coach, self.second, entry("jobb térd fáj mély guggolásnál"))
+        with self.assertRaises(services.MemoryRuleError):
+            services.update_memory(self.coach, self.second, entry("rövid"))
+        with self.assertRaises(PermissionError):
+            services.update_memory(self.other, self.second, entry("Bal váll húzódik nyomásoknál"))
+
+    def test_closed_entries_cannot_be_edited(self):
+        services.resolve(self.coach, self.memory)
+        with self.assertRaises(services.MemoryRuleError):
+            services.update_memory(self.coach, self.memory, entry("Jobb térd már nem fáj guggolásnál"))
+
+    def test_edit_view(self):
+        self.client.force_login(self.coach)
+        url = reverse("memory-edit", args=[self.memory.pk])
+        self.assertContains(self.client.get(url), "Jobb térd fáj mély guggolásnál")
+        response = self.client.post(url, {"category": PAIN, "content": "Jobb térd csak 140 kg felett fáj",
+            "observed_on": "2026-10-17"}, follow=True)
+        self.assertContains(response, "szerkesztve")
+        response = self.client.post(url, {"category": PAIN, "content": "Bal váll húzódik fekvenyomás alján",
+            "observed_on": "2026-10-17"})
+        self.assertContains(response, "Már van hasonló bejegyzés")
+        self.client.force_login(self.other)
+        self.assertEqual(self.client.get(url).status_code, 404)

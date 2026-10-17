@@ -49,6 +49,10 @@ class AthleteMemory(models.Model):
     reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+", null=True, blank=True,
         on_delete=models.PROTECT)
     reviewed_at = models.DateTimeField(null=True, blank=True)
+    # Last manual edit by the coach; the previous wording is not kept.
+    edited_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+", null=True, blank=True,
+        on_delete=models.PROTECT)
+    edited_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-observed_on", "-pk"]

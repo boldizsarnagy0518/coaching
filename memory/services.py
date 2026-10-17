@@ -50,10 +50,10 @@ def normalize(text):
     return re.sub(r"[^\w]+", " ", text.lower()).strip()
 
 
-def find_duplicate(athlete, category, content):
+def find_duplicate(athlete, category, content, exclude_pk=None):
     """Return an open entry in the same category that says essentially the same thing."""
     target = normalize(content)
-    for existing in athlete.memories.filter(category=category, status__in=OPEN_STATUSES):
+    for existing in athlete.memories.filter(category=category, status__in=OPEN_STATUSES).exclude(pk=exclude_pk):
         other = normalize(existing.content)
         if target == other or target in other or other in target:
             return existing
@@ -62,7 +62,7 @@ def find_duplicate(athlete, category, content):
     return None
 
 
-def _validate(athlete, data, source):
+def _validate(athlete, data, source, exclude_pk=None):
     if data.category not in MemoryCategory.values:
         raise MemoryRuleError("Ismeretlen kategória. Válassz a megadott kategóriák közül.")
     content = " ".join(data.content.split())
@@ -74,10 +74,10 @@ def _validate(athlete, data, source):
     if source == MemorySource.AI_PROPOSAL:
         if len(reason) < MIN_REASON_LENGTH:
             raise MemoryRuleError("AI-javaslathoz indoklás kell: miért lesz ez később is fontos?")
-        pending = athlete.memories.filter(status=MemoryStatus.PROPOSED).count()
-        if pending >= MAX_PENDING_PROPOSALS:
+        pending = athlete.memories.filter(status=MemoryStatus.PROPOSED).exclude(pk=exclude_pk).count()
+        if exclude_pk is None and pending >= MAX_PENDING_PROPOSALS:
             raise MemoryRuleError("Túl sok jóváhagyásra váró javaslat; előbb az edző nézze át őket.")
-    duplicate = find_duplicate(athlete, data.category, content)
+    duplicate = find_duplicate(athlete, data.category, content, exclude_pk)
     if duplicate:
         raise DuplicateMemoryError(duplicate)
     return content, reason[:MAX_CONTENT_LENGTH]
@@ -108,6 +108,30 @@ def create_memory(coach, athlete, data, source):
     )
     log_event("memory.created", memory=memory.pk, athlete=athlete.pk, source=source, status=status,
         category=data.category)
+    return memory
+
+
+@transaction.atomic
+def update_memory(coach, memory, data):
+    """Edit an open entry (active or proposed) under the same rules as a new one; history is not kept."""
+    if memory.athlete.coach_id != coach.pk:
+        raise PermissionError("Memory does not belong to this coach.")
+    Athlete.objects.select_for_update().get(pk=memory.athlete_id)
+    memory.refresh_from_db()
+    if memory.status not in OPEN_STATUSES:
+        raise MemoryRuleError("Csak aktív vagy jóváhagyásra váró bejegyzés szerkeszthető.")
+    try:
+        content, reason = _validate(memory.athlete, data, memory.source, exclude_pk=memory.pk)
+    except MemoryRuleError as exc:
+        rule = "duplicate" if isinstance(exc, DuplicateMemoryError) else "invalid"
+        log_event("memory.edit_refused", memory=memory.pk, rule=rule)
+        raise
+    memory.category, memory.content, memory.reason = data.category, content, reason
+    memory.exercise = data.exercise.strip()[:120]
+    memory.observed_on = data.observed_on or memory.observed_on
+    memory.edited_by, memory.edited_at = coach, timezone.now()
+    memory.save()
+    log_event("memory.edited", memory=memory.pk, athlete=memory.athlete_id, status=memory.status)
     return memory
 
 

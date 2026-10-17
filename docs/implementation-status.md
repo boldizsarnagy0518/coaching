@@ -57,6 +57,6 @@ This is a technical foundation brought forward at the user's request. It does no
 
 ## Not done yet
 
-Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; multi-session re-planning; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; editing memory entries; billing; public deployment; scheduled and off-machine backups; load testing beyond the single-machine concurrency check; a complete data-handling process.
+Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; multi-session re-planning; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; billing; public deployment; scheduled and off-machine backups; load testing beyond the single-machine concurrency check; a complete data-handling process.
 
 The current UI is built for coaches: the coach records the athlete's data. The app does not change loads automatically and gives no injury-management advice. It is not yet suitable for running a live service with real athlete data.

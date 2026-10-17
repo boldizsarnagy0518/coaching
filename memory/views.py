@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from training.models import Athlete
@@ -23,10 +24,8 @@ def athlete_memory(request, pk):
     athlete = get_object_or_404(Athlete, pk=pk, coach=request.user)
     form = MemoryForm(request.POST if request.method == "POST" else None)
     if request.method == "POST" and form.is_valid():
-        data = services.MemoryInput(**{name: form.cleaned_data[name] or "" for name in
-            ["category", "content", "exercise", "reason"]}, observed_on=form.cleaned_data["observed_on"])
         try:
-            services.create_memory(request.user, athlete, data, MemorySource.COACH)
+            services.create_memory(request.user, athlete, _input(form), MemorySource.COACH)
         except services.MemoryRuleError as exc:
             form.add_error(None, str(exc))
         else:
@@ -41,6 +40,30 @@ def athlete_memory(request, pk):
         "proposals": [m for m in memories if m.status == MemoryStatus.PROPOSED],
         "resolved": [m for m in memories if m.status == MemoryStatus.RESOLVED],
     })
+
+
+def _input(form):
+    data = form.cleaned_data
+    return services.MemoryInput(category=data["category"], content=data["content"] or "",
+        exercise=data["exercise"] or "", reason=data["reason"] or "", observed_on=data["observed_on"])
+
+
+@login_required
+def edit_memory(request, pk):
+    memory = get_object_or_404(AthleteMemory.objects.select_related("athlete"), pk=pk, athlete__coach=request.user,
+        status__in=services.OPEN_STATUSES)
+    form = MemoryForm(request.POST if request.method == "POST" else None, instance=memory)
+    if request.method == "POST" and form.is_valid():
+        memory.refresh_from_db()  # form validation mutates the instance; the service applies the change
+        try:
+            services.update_memory(request.user, memory, _input(form))
+        except services.MemoryRuleError as exc:
+            form.add_error(None, str(exc))
+        else:
+            messages.success(request, "Bejegyzés módosítva.")
+            return redirect("athlete-memory", pk=memory.athlete_id)
+    return render(request, "training/form.html", {"form": form, "title": f"Bejegyzés szerkesztése · {memory.athlete.name}",
+        "back_url": reverse("athlete-memory", args=[memory.athlete_id]), "back_label": "Emlékek"})
 
 
 @login_required

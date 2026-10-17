@@ -11,7 +11,7 @@ A curated, per-athlete "second memory" for the coach: durable facts such as pain
 | Part | Works | Still missing |
 |---|---|---|
 | Data model | `AthleteMemory`: category, content, optional exercise and reason, observation date, status, source, creator, reviewer | Free-form tags, attachments, links to a specific session or plan version |
-| Coach entry (web) | **Emlékek** page from the athlete page; entries are active immediately | Editing an entry's text (currently: resolve and add a new one) |
+| Coach entry (web) | **Emlékek** page from the athlete page; entries are active immediately; active and proposed entries can be edited under the same rules (marked "szerkesztve") | Version history of edits |
 | Coach review | Approve / reject AI proposals; resolve and reactivate active entries | Bulk review, notifications |
 | Selection rules | Fixed categories, 12–300 characters, near-duplicate rejection, reason required for AI proposals, max 10 pending proposals per athlete | Expiry dates, automatic review reminders for old entries |
 | MCP server | Local stdio server for one coach: list athletes, athlete context, search, propose, save on explicit coach request, propose a session move/skip | Remote/hosted access, athlete-side AI, in-app chat |
@@ -58,6 +58,7 @@ Tools: `list_athletes`, `get_athlete_context` (active memories, pending count, l
 | Explicit coach requests are active at once | The coach asked for it; extra approval would be friction | The AI could misuse the tool; entries are labelled by source and can be resolved |
 | Near-duplicate check (normalised text, containment, similarity ≥ 0.85) within open entries of the same category | Rephrased repeats should not pile up | Very different wording of the same fact can still get through; this is a heuristic |
 | Pending proposal cap (10 per athlete) | An over-eager AI cannot flood the review queue | Further proposals are refused until the coach reviews |
+| Editing overwrites the wording, with `edited_by`/`edited_at` | Typos and sharper wording should not need a new entry | The earlier wording is not kept; resolve and re-add when the history matters |
 | Resolve instead of delete | History stays visible ("the knee problem in spring") | A final data-protection deletion process is separate work |
 | MCP instead of an in-app chat first | The idea can be tried in an existing AI client without building a chat UI or managing API keys | Requires a desktop AI client; not usable by athletes |
 | Business rules in `services.py`, thin MCP layer | The web UI and the AI follow exactly the same rules | New write paths must call the services, not the model directly |
@@ -66,7 +67,7 @@ Tools: `list_athletes`, `get_athlete_context` (active memories, pending count, l
 
 ## Verification
 
-`uv run python manage.py test memory`: 14 tests covering the selection rules, review transitions, coach isolation in views and tools, the athlete-page counter and an end-to-end tool call through the FastMCP server. Last local result: all passed (68/68 in the full suite). MCP error handling is tested in [ops/tests.py](../ops/tests.py).
+`uv run python manage.py test memory`: 17 tests covering the selection rules, review transitions, editing (rules, self-exclusion from the duplicate check, closed entries, other coaches), coach isolation in views and tools, the athlete-page counter and an end-to-end tool call through the FastMCP server. Last local result: all passed (68/68 in the full suite). MCP error handling is tested in [ops/tests.py](../ops/tests.py).
 
 A manual stdio smoke test with the official MCP Python client (initialize, list tools, call `list_athletes`) succeeded against a temporary local account that was removed afterwards. Trying it in Claude Desktop with real conversations has not been done yet.
 
@@ -74,4 +75,4 @@ A manual stdio smoke test with the official MCP Python client (initialize, list 
 
 1. Use it yourself with synthetic or consented data and check whether the AI proposes useful entries and leaves out the noise; tune the instructions and rules based on what you see.
 2. Add the memory question to the validation interviews (do coaches lose track of athlete history?).
-3. Later: editing entries, an expiry or "review again" date for temporary issues, and an in-app chat that uses the same services.
+3. Later: an expiry or "review again" date for temporary issues, and an in-app chat that uses the same services.
