@@ -1,6 +1,6 @@
 # Database schema and migrations
 
-[Training module](../README.md) Â· Updated: 17 October 2026
+[Training module](../README.md) · Updated: 17 October 2026
 
 ## Responsibility
 
