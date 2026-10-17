@@ -1,0 +1,18 @@
+{% load static %}
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Coaching · Edzésnapló{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'app.css' %}">
+</head>
+<body>
+<header><a class="brand" href="{% url 'dashboard' %}">COACHING<span>Erőemelő edzésnapló</span></a>
+{% if user.is_authenticated %}<form method="post" action="{% url 'logout' %}">{% csrf_token %}<span class="user">{{ user.username }}</span><button class="quiet" type="submit">Kilépés</button></form>{% endif %}</header>
+<main>
+  <p class="eyebrow">Belső prototípus · szintetikus tesztadatokhoz</p>
+  {% for message in messages %}<p class="notice" role="status">{{ message }}</p>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer>A terv és az elvégzett munka külön történet.</footer>
+</body></html>

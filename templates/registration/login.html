@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="intro"><h1>Átlátható edzői munka.</h1><p>Sportolók, tervek és tényleges teljesítés egy helyen.</p></section>
+<section class="panel narrow"><h2>Edzői bejelentkezés</h2>
+<form method="post">{% csrf_token %}{{ form.as_p }}<input type="hidden" name="next" value="{{ next }}"><button type="submit">Belépés</button></form>
+<p class="muted">A hozzáférést a prototípus kezelője hozza létre.</p></section>
+{% endblock %}

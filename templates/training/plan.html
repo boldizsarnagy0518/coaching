@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block content %}<a href="{% url 'athlete' plan.athlete_id %}">← {{ plan.athlete.name }}</a>
+<div class="page-heading"><div><h1>{{ plan.title }}</h1><p>{{ plan.athlete.name }} · Előírt edzések</p></div><a class="button" href="{% url 'session-create' plan.pk %}">+ Új edzés</a></div>
+<div class="grid">{% for session in plan.sessions.all %}<a class="panel card" href="{% url 'session' session.pk %}"><span class="eyebrow">{{ session.scheduled_date|date:'Y. m. d.' }}</span><h2>{{ session.title }}</h2><span>Napló megnyitása →</span></a>{% empty %}<p class="panel">Adj hozzá egy edzést a tervhez.</p>{% endfor %}</div>{% endblock %}
