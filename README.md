@@ -2,6 +2,23 @@
 
 Erőemelő edzők tervmódosítási és naplózási munkáját segítő alkalmazás.
 
+## Modulok és aktuális állapot
+
+Frissítve: 2026. október 17. Jelenleg helyi edzői naplózó prototípus működik. Az egyes részek állapota, döntései és korlátai a saját README-jükben találhatók.
+
+| Rész | Állapot | Részletes leírás |
+|---|---|---|
+| Alkalmazásbeállítások és belépés | Helyi használatra működik | [coaching](coaching/README.md) |
+| Sportolók, tervek és naplózás | Első adatfolyamat működik; újratervezés nincs | [training](training/README.md) |
+| Adatbázisséma | Első migráció elkészült; ez nem tervverziózás | [migrations](training/migrations/README.md) |
+| Demóadat és kezelői parancsok | Szintetikus példa meglévő fiókhoz | [management](training/management/README.md) |
+| Felület és űrlapok | Magyar, szerveroldali edzői képernyők | [templates](templates/README.md) |
+| Megjelenés | Egy reszponzív stíluslap | [static](static/README.md) |
+| Automatizált ellenőrzés | 14 helyi teszt sikeres; CI definiálva | [workflows](.github/workflows/README.md) |
+| Tervezés és validáció | Dokumentálva; piaci kapu még nyitott | [docs](docs/README.md) |
+
+Minden rész README-je azonos szerkezetben írja le a felelősséget, a működő és hiányzó elemeket, a **mit–miért–következmény** döntéseket, az ellenőrzést és a következő lépést. Funkcióváltozáskor az érintett README is frissítendő. A pontos szabály a [dokumentációs útmutatóban](docs/README.md) található.
+
 ## Tervezés
 
 - [Kutatás és termékterv](eroemelo_ai_kutatas_es_terv.md)

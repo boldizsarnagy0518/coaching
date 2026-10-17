@@ -2,6 +2,8 @@
 
 2026. október 17. Az aktuális, 17 munkahétre átdolgozott ütemterv az irányadó.
 
+Az egyes részek részletes állapota és döntési indoklása a [modulonkénti README-mutatóból](../README.md) érhető el. A [dokumentációs szabály](README.md) alapján ezek a későbbi fejlesztésekkel együtt frissítendők.
+
 ## Elkészült első műszaki munkacsomag
 
 - Django 5.2, helyi SQLite, verziózott adatbázis-migráció.
