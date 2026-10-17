@@ -8,13 +8,13 @@ Manually started, reproducible helper operations. Currently there is a single co
 
 ## Current state
 
-For an existing user, it creates one synthetic athlete, one plan and one session with three prescribed sets. It does not create users, does not change passwords and does not log performance. It reports an error if the user does not exist.
+For an existing user, it creates one synthetic athlete, one plan, two sessions (today and in three days) with three prescribed sets each, and two memory entries (one active coach entry, one pending AI proposal). It does not create users, does not change passwords and does not log performance. It reports an error if the user does not exist. A demo login can be created with `create_demo_coach` from the [operations module](../../ops/README.md).
 
 ```powershell
 uv run python manage.py seed_demo --username YOUR_USERNAME
 ```
 
-Run the command from the project root. The session date is the current date of the machine running it.
+Run the command from the project root. The session dates are relative to the current date of the machine running it.
 
 ## Decisions and reasoning
 
@@ -25,6 +25,7 @@ Run the command from the project root. The session date is the current date of t
 | Reuse existing demo items | Running it again must not duplicate the example | Matching is by name/title; renamed data can lead to a new example |
 | Sets are only created for a new session | Re-running must not overwrite a demo already in use | Not a general repair or reset command |
 | One transaction | A failed run must not leave half-created data | Does not replace an operational backup |
+| English, ASCII-only output | A cp1252 console crashed on Hungarian letters and rolled the run back | Demo data itself stays Hungarian |
 
 ## Verification
 

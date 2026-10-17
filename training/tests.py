@@ -1,10 +1,13 @@
+import tempfile
 import uuid
 from datetime import date
 from decimal import Decimal
 from io import StringIO
+from pathlib import Path
+from unittest import mock
 
 from django.contrib.auth import get_user_model
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -141,6 +144,26 @@ class JournalTests(TestCase):
 
     def test_seed_demo_is_repeatable_and_scoped_to_user(self):
         for _ in range(2):
-            call_command("seed_demo", username=self.coach.username, stdout=StringIO())
-        self.assertEqual(Athlete.objects.filter(coach=self.coach, name="Demó sportoló · szintetikus").count(), 1)
+            out = StringIO()
+            call_command("seed_demo", username=self.coach.username, stdout=out)
+            # A cp1252 console cannot print Hungarian letters; command output must stay ASCII.
+            self.assertTrue(out.getvalue().isascii())
+        athlete = Athlete.objects.get(coach=self.coach, name="Demó sportoló · szintetikus")
+        self.assertEqual(TrainingSession.objects.filter(plan__athlete=athlete).count(), 2)
+        self.assertEqual(athlete.memories.count(), 2)
         self.assertFalse(Athlete.objects.filter(coach=self.other).exists())
+
+    def test_create_demo_coach_writes_credentials_not_stdout(self):
+        from ops.management.commands import create_demo_coach
+
+        out = StringIO()
+        with self.settings(DEBUG=True), tempfile.TemporaryDirectory() as folder, \
+                mock.patch.object(create_demo_coach, "CREDENTIALS_FILE", Path(folder) / "creds.txt"):
+            call_command("create_demo_coach", username="demo-x", stdout=out)
+            password = (Path(folder) / "creds.txt").read_text(encoding="utf-8").split("password=")[1].strip()
+        self.assertNotIn(password, out.getvalue())
+        self.assertTrue(get_user_model().objects.get(username="demo-x").check_password(password))
+        with self.settings(DEBUG=True), self.assertRaises(CommandError):
+            call_command("create_demo_coach", username="demo-x", stdout=StringIO())  # never resets a password
+        with self.settings(DEBUG=False), self.assertRaises(CommandError):
+            call_command("create_demo_coach", username="demo-y", stdout=StringIO())

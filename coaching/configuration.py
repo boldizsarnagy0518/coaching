@@ -97,7 +97,7 @@ LOGGING = {
     },
     "loggers": {
         "coaching": {"handlers": ["console"], "level": LOG_LEVEL, "propagate": False},
-        "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+        "django": {"handlers": ["console"], "level": "ERROR" if RUNNING_TESTS else "WARNING", "propagate": False},
     },
 }
 if os.environ.get("COACHING_LOG_FILE", "true" if DEBUG and not RUNNING_TESTS else "false").lower() == "true":

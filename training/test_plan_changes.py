@@ -117,6 +117,11 @@ class PlanChangeViewTests(TestCase):
         self.assertEqual(self.session.scheduled_date, new_date)
         self.assertContains(self.client.get(reverse("plan", args=[self.plan.pk])), "2. verzió")
 
+    def test_change_form_links_back_to_session(self):
+        response = self.client.get(reverse("session-change", args=[self.session.pk, "move"]))
+        self.assertContains(response, f'href="{reverse("session", args=[self.session.pk])}"')
+        self.assertContains(response, "Előtte / utána megtekintése")
+
     def test_move_requires_date_and_access_is_scoped(self):
         response = self.client.post(reverse("session-change", args=[self.session.pk, "move"]), {"reason": "x"})
         self.assertTrue(response.context["form"].errors)

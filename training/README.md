@@ -52,13 +52,13 @@ The ranges 1–100 target reps, 0–100 actual reps and 1–10 RPE are **input l
 
 ## Verification
 
-Run `uv run python manage.py test training` from the project root. The module's three test files contain 36 tests in total:
+Run `uv run python manage.py test training` from the project root. The module's three test files contain 38 tests in total:
 
-- [tests.py](tests.py), 14 tests: the full creation path, blocking another coach's access, resubmission, conflicts, invalid values, optional RPE, partial logging, CSRF, HTML escaping and repeatable demo data.
+- [tests.py](tests.py), 15 tests: the full creation path, blocking another coach's access, resubmission, conflicts, invalid values, optional RPE, partial logging, CSRF, HTML escaping, repeatable demo data with ASCII-only output, and the demo coach command.
 - [test_transfers.py](test_transfers.py), 12 tests: CSV export and preview, URL and redirect restrictions, access control, and that the preview page shows no error on first load.
-- [test_plan_changes.py](test_plan_changes.py), 10 tests: move and skip with versioning, stale proposals, logged sessions, input rules, same-day conflict in the preview, the full view flow, access isolation and the AI proposal tool.
+- [test_plan_changes.py](test_plan_changes.py), 11 tests: the change form's link back to the session, move and skip with versioning, stale proposals, logged sessions, input rules, same-day conflict in the preview, the full view flow, access isolation and the AI proposal tool.
 
-Last local result: 36/36 passed (62/62 in the full suite including the [memory](../memory/README.md) and [operations](../ops/README.md) modules).
+Last local result: 38/38 passed (68/68 in the full suite including the [memory](../memory/README.md) and [operations](../ops/README.md) modules).
 
 ## Next step
 

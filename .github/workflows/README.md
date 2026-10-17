@@ -10,7 +10,7 @@ The [tests.yml](tests.yml) GitHub Actions workflow checks the project on push an
 
 Ubuntu runner, Python 3.12, pinned uv 0.8.14. The workflow installs from the lockfile and runs ruff, the Django system check, the missing-migration check, and the tests under coverage; `coverage report` fails the job below 85% branch coverage. Its GitHub permission is `contents: read` only; there is no deployment step.
 
-**Evidence:** the latest local run passed all tests (62 tests, 94% branch coverage; per-module counts are in the [training](../../training/README.md) and [memory](../../memory/README.md) READMEs) and the Django check reported no issues. The result of the workflow on GitHub has to be checked separately; the existence of the configuration and a local success do not prove a remote CI success.
+**Evidence:** the latest local run passed all tests (68 tests, 94% branch coverage; per-module counts are in the [training](../../training/README.md) and [memory](../../memory/README.md) READMEs) and the Django check reported no issues. The result of the workflow on GitHub has to be checked separately; the existence of the configuration and a local success do not prove a remote CI success.
 
 **Not done:** browser E2E tests, tests on PostgreSQL and on multiple Python versions, load testing, automatic deployment.
 

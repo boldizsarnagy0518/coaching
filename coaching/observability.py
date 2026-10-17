@@ -54,7 +54,8 @@ class RequestIdMiddleware:
             return response
         finally:
             user = getattr(request, "user", None)
-            level = logging.WARNING if status >= 500 else logging.INFO
+            # HEAD requests are mostly liveness probes; keep them out of the normal log volume.
+            level = logging.WARNING if status >= 500 else logging.DEBUG if request.method == "HEAD" else logging.INFO
             # The path is logged without the query string, which could contain user input.
             request_logger.log(level, _format({"method": request.method, "path": request.path, "status": status,
                 "duration_ms": round((time.perf_counter() - started) * 1000, 1),

@@ -37,6 +37,10 @@ class ObservabilityTests(TestCase):
         unsafe = self.client.get(reverse("healthz"), headers={"X-Request-ID": "bad id\nwith newline"})
         self.assertRegex(unsafe["X-Request-ID"], r"^[0-9a-f]{32}$")
 
+    def test_head_probes_are_not_logged_at_info(self):
+        with self.assertNoLogs("coaching.request", level="INFO"):
+            self.client.head(reverse("healthz"))
+
     def test_query_string_is_not_logged(self):
         with self.assertLogs("coaching.request", level="INFO") as logs:
             self.client.get(reverse("healthz") + "?name=Secret")
@@ -143,3 +147,47 @@ class BackupTests(TransactionTestCase):
                 call_command("backup_db", "--verify", str(broken), stdout=StringIO())
             with self.assertRaises(CommandError):
                 call_command("backup_db", "--dir", folder, "--keep", "0", stdout=StringIO())
+
+
+class RestoreTests(TransactionTestCase):
+    def make_db(self, path, value):
+        with closing(sqlite3.connect(path)) as db:
+            db.execute("CREATE TABLE IF NOT EXISTS item (value TEXT)")
+            db.execute("DELETE FROM item")
+            db.execute("INSERT INTO item VALUES (?)", (value,))
+            db.commit()
+
+    def read(self, path):
+        with closing(sqlite3.connect(path)) as db:
+            return db.execute("SELECT value FROM item").fetchone()[0]
+
+    def test_restore_replaces_content_and_keeps_safety_copy(self):
+        from .backup import restore_backup
+        with tempfile.TemporaryDirectory() as folder:
+            live, backup = Path(folder) / "live.sqlite3", Path(folder) / "backup.sqlite3"
+            self.make_db(backup, "from backup")
+            self.make_db(live, "current")
+            safety = restore_backup(backup, target=live, safety_dir=folder)
+            self.assertEqual(self.read(live), "from backup")
+            self.assertEqual(self.read(safety), "current")
+
+    def test_restore_refuses_bad_source_and_busy_target(self):
+        from .backup import BackupError, restore_backup
+        with tempfile.TemporaryDirectory() as folder:
+            live, backup, broken = (Path(folder) / name for name in ["live.sqlite3", "b.sqlite3", "x.sqlite3"])
+            self.make_db(live, "current")
+            self.make_db(backup, "from backup")
+            broken.write_bytes(b"garbage" * 200)
+            for source in [broken, Path(folder) / "missing.sqlite3", live]:
+                with self.subTest(source=source.name), self.assertRaises(BackupError):
+                    restore_backup(source, target=live, safety_dir=folder)
+            with closing(sqlite3.connect(live)) as other:
+                other.execute("BEGIN IMMEDIATE")  # another process is writing
+                with self.assertRaisesMessage(BackupError, "in use"):
+                    restore_backup(backup, target=live, safety_dir=folder)
+                other.execute("ROLLBACK")
+            self.assertEqual(self.read(live), "current")
+
+    def test_command_requires_confirmation(self):
+        with self.assertRaisesMessage(CommandError, "--yes"):
+            call_command("restore_db", "--from", "whatever.sqlite3", stdout=StringIO())

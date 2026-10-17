@@ -19,7 +19,7 @@ The HTML screens served by Django. Input validation and data isolation are the b
 | [training/plan.html](training/plan.html) | Sessions of one plan, version number, pending changes, change history |
 | [training/session.html](training/session.html) | Prescribed and actual sets, number of logged sets, move/skip buttons, skipped notice |
 | [training/plan_change.html](training/plan_change.html) | One change: before/after table, same-day conflict, approve/reject |
-| [training/form.html](training/form.html) | Shared data entry form |
+| [training/form.html](training/form.html) | Shared data entry form; views can set the back link and the submit label |
 | [training/transfer.html](training/transfer.html) | CSV / Google Sheets structural preview |
 | [memory/athlete_memory.html](memory/athlete_memory.html) | Athlete memory: pending AI proposals, active entries by category, new entry form, resolved history |
 

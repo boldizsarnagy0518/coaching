@@ -171,7 +171,8 @@ def log_set(request, pk):
             log_event("set_log.saved", set=item.pk)
         messages.success(request, "A sorozat mentve. Az előírt terv változatlan.")
         return redirect("session", pk=item.session_id)
-    return render(request, "training/form.html", {"form": form, "title": f"Teljesítés · {item.exercise}"})
+    return render(request, "training/form.html", {"form": form, "title": f"Teljesítés · {item.exercise}",
+        "back_url": reverse("session", args=[item.session_id]), "back_label": "Vissza az edzéshez"})
 
 
 @login_required
@@ -190,7 +191,8 @@ def session_change(request, pk, kind):
         else:
             return redirect("plan-change", pk=change.pk)
     title = f"{ChangeKind(kind).label} · {session.title} ({session.scheduled_date:%Y. %m. %d.})"
-    return render(request, "training/form.html", {"form": form, "title": title})
+    return render(request, "training/form.html", {"form": form, "title": title, "submit_label": "Előtte / utána megtekintése",
+        "back_url": reverse("session", args=[session.pk]), "back_label": session.title})
 
 
 @login_required

@@ -15,8 +15,8 @@ Updated: 17 October 2026. A local coach training-log prototype with a curated at
 | User interface and forms | Hungarian, server-rendered coach screens | [templates](templates/README.md) |
 | Styling | One responsive stylesheet | [static](static/README.md) |
 | Athlete memory and MCP server | Coach entries, reviewed AI proposals, local stdio MCP server | [memory](memory/README.md) |
-| Operations | Request IDs and logs, domain events, `/healthz`, SQLite WAL, verified backups, error pages | [ops](ops/README.md) |
-| Automated checks | 62 local tests pass, 94% branch coverage, lint; CI defined | [workflows](.github/workflows/README.md) |
+| Operations | Request IDs and logs, domain events, `/healthz`, SQLite WAL, verified backup and restore, backup scheduling script, demo login | [ops](ops/README.md) |
+| Automated checks | 68 local tests pass, 94% branch coverage, lint; CI defined | [workflows](.github/workflows/README.md) |
 | Planning and validation | Documented; market gate still open | [docs](docs/README.md) |
 | CSV and Google Sheets | CSV export, file and published-link preview | [Data transfer](docs/data-transfer/README.md) |
 
@@ -45,7 +45,7 @@ uv run python manage.py seed_demo --username YOUR_USERNAME
 uv run python manage.py runserver 127.0.0.1:8765
 ```
 
-Open http://127.0.0.1:8765 and log in with the account you created. Loading demo data is optional and creates only a synthetic session. `createsuperuser` asks for the password interactively; there is no hard-coded demo password. Another coach test account can be created the same way.
+Open http://127.0.0.1:8765 and log in with the account you created. To try the app without touching your own database, use the demo setup in the [operations README](ops/README.md) (`COACHING_DB_PATH`, `create_demo_coach`). Loading demo data is optional and creates only a synthetic session. `createsuperuser` asks for the password interactively; there is no hard-coded demo password. Another coach test account can be created the same way.
 
 ## Verification
 
