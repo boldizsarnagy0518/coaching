@@ -1,3 +1,3 @@
 {% extends 'base.html' %}
-{% block content %}<a href="{{ back_url|default:'/' }}">← {{ back_label|default:'Sportolók' }}</a><h1>{{ title }}</h1>
+{% block content %}<a href="{{ back_url|default:'/' }}">← {{ back_label|default:'Sportolók' }}</a><h1>{{ title }}</h1>{% if intro %}<p class="muted">{{ intro }}</p>{% endif %}
 <section class="panel narrow"><form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">{{ submit_label|default:'Mentés' }}</button></form></section>{% endblock %}

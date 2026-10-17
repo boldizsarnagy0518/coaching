@@ -27,7 +27,7 @@ Per-athlete curated memory with fixed categories, near-duplicate rejection, reas
 
 **Plan versions and session changes**
 
-Plans have a version number; a session without logged sets can be moved or skipped through a proposal with a before/after view and coach approval. Approving a proposal based on an outdated version marks it stale; skipped sessions cannot be logged. The AI can propose such changes through the MCP server, but cannot apply them. [State and decisions](../training/README.md).
+Plans have a version number; a session without logged sets can be moved or skipped, the remaining sets of a partially logged session can be moved to a new continuation session, and several sessions can be rescheduled as one batch (one version, all or nothing), always through a proposal with a before/after view and coach approval. Memory entries can be edited under the same rules as new ones. Approving a proposal based on an outdated version marks it stale; skipped sessions cannot be logged. The AI can propose such changes through the MCP server, but cannot apply them. [State and decisions](../training/README.md).
 
 **Testability, observability and stability**
 
@@ -35,7 +35,7 @@ Lint (ruff) and branch coverage with an 85% gate in CI; request IDs, request and
 
 Restore command with a safety copy and a recorded restore drill; a backup scheduling script (tried, then unregistered at the user's request; backups are manual); a demo login command; a browser check of the main flows at phone width.
 
-**Verification:** 68 local tests passed (94% branch coverage); the online download is tested with a simulated response; a manual stdio smoke test of the MCP server succeeded. Real use in an AI client has not been tried yet.
+**Verification:** 80 local tests passed (95% branch coverage); the multi-process concurrency check passed after these changes; the online download is tested with a simulated response; a manual stdio smoke test of the MCP server succeeded. Real use in an AI client has not been tried yet.
 
 This is a technical foundation brought forward at the user's request. It does not prove that the validation gate has been met, and it does not mean all tasks of weeks 6–10 are complete.
 
@@ -49,14 +49,13 @@ This is a technical foundation brought forward at the user's request. It does no
 
 ## Next technical work packages
 
-1. Partially completed sessions: move only the remaining sets.
-2. Changing the number of training days (e.g. 3 → 4) as one multi-session proposal.
-3. Versioned prescriptions, so load and exercise swaps can use the same approval flow.
-4. Trying the MCP server in a real AI client with synthetic data and tuning the memory rules.
-5. Repeating the concurrency check after larger data-model changes.
+1. Trying the MCP server in a real AI client with synthetic data and tuning the memory rules (guide: [mcp-trial.md](mcp-trial.md)).
+2. Versioned prescriptions, so load and exercise swaps can use the same approval flow.
+3. Adding or removing sessions inside a proposal.
+4. Repeating the concurrency check after larger data-model changes.
 
 ## Not done yet
 
-Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; multi-session re-planning; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; billing; public deployment; scheduled and off-machine backups; load testing beyond the single-machine concurrency check; a complete data-handling process.
+Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; billing; public deployment; scheduled and off-machine backups; load testing beyond the single-machine concurrency check; a complete data-handling process.
 
 The current UI is built for coaches: the coach records the athlete's data. The app does not change loads automatically and gives no injury-management advice. It is not yet suitable for running a live service with real athlete data.

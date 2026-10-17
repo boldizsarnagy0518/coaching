@@ -55,7 +55,26 @@ class PlanChangeForm(forms.Form):
 
     def __init__(self, *args, kind, **kwargs):
         super().__init__(*args, **kwargs)
-        if kind == "move":
+        if kind in ("move", "move_rest"):
             self.fields["new_date"].required = True
         else:
             del self.fields["new_date"]
+
+
+class RescheduleForm(forms.Form):
+    """One date field per movable session, prefilled with its current date."""
+
+    reason = forms.CharField(label="Indoklás (opcionális)", max_length=300, required=False,
+        widget=forms.Textarea(attrs={"rows": 2, "maxlength": 300}))
+
+    def __init__(self, *args, sessions, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sessions = sessions
+        for session in sessions:
+            label = f"{session.title} (most: {session.scheduled_date:%Y. %m. %d.})"
+            self.fields[f"date_{session.pk}"] = forms.DateField(label=label, initial=session.scheduled_date,
+                widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"))
+        self.order_fields([f"date_{session.pk}" for session in sessions] + ["reason"])
+
+    def moves(self):
+        return [(session, self.cleaned_data[f"date_{session.pk}"]) for session in self.sessions]

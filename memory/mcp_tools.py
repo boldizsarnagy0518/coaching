@@ -152,7 +152,7 @@ def save_memory_on_coach_request(coach, athlete_id, category, content, exercise=
 
 
 def propose_session_change(coach, athlete_id, session_id, kind, reason, new_date=None):
-    """Create a move/skip proposal for one future, unlogged session; the coach approves it in the app."""
+    """Create a move, skip or move_rest proposal for one session; the coach approves it in the app."""
     athlete = _athlete(coach, athlete_id)
     try:
         session = TrainingSession.objects.get(pk=session_id, plan__athlete=athlete)
@@ -165,6 +165,31 @@ def propose_session_change(coach, athlete_id, session_id, kind, reason, new_date
         return {"saved": False, "reason": str(exc)}
     return {"saved": True, "change_id": change.pk, "status": change.status, "base_version": change.base_version,
         "note": "The coach reviews the before/after view and approves or rejects it in the app."}
+
+
+def propose_reschedule(coach, athlete_id, moves, reason):
+    """Propose several session moves as one batch (e.g. a new weekly schedule).
+
+    ``moves`` is a list of {"session_id": int, "new_date": "YYYY-MM-DD"}; all sessions must belong to one plan.
+    """
+    athlete = _athlete(coach, athlete_id)
+    if not isinstance(moves, list) or not moves:
+        raise ValueError("moves must be a non-empty list of {session_id, new_date}.")
+    pairs = []
+    for move in moves:
+        try:
+            session = TrainingSession.objects.get(pk=int(move["session_id"]), plan__athlete=athlete)
+        except (KeyError, TypeError, ValueError, TrainingSession.DoesNotExist) as exc:
+            raise ValueError(f"Unknown or invalid session in moves: {move!r}") from exc
+        pairs.append((session, _parse_date(move.get("new_date"), "new_date")))
+    if len({session.plan_id for session, _ in pairs}) != 1:
+        raise ValueError("All sessions of one reschedule must belong to the same plan.")
+    try:
+        changes = plan_changes.propose_batch(coach, pairs[0][0].plan, pairs, reason, source=ChangeSource.AI)
+    except plan_changes.PlanChangeError as exc:
+        return {"saved": False, "reason": str(exc)}
+    return {"saved": True, "change_id": changes[0].pk, "moves": len(changes), "base_version": changes[0].base_version,
+        "note": "The coach reviews the before/after view and approves or rejects the whole batch in the app."}
 
 
 CATEGORIES = ", ".join(f"{value} ({label})" for value, label in MemoryCategory.choices)

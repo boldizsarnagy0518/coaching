@@ -12,6 +12,7 @@ Keep the working product, the planned features and the not-yet-proven business a
 |---|---|
 | [Implementation status](implementation-status.md) | Short summary of what is done and what comes next |
 | [Validation worksheet](validation-template.md) | Empty template for interviews, time measurement and the competitor trial |
+| [MCP trial in Claude Desktop](mcp-trial.md) | Setup with a demo database, ten scenarios and a scoring sheet; not yet carried out |
 | [CSV and Google Sheets](data-transfer/README.md) | Data transfer options, limits and the plan for a private connection |
 | [Current schedule](../elso_szakasz_utemterv.md) | 17 work weeks, 10 + 2 hours per week, moving break and gates |
 | [Research and product plan](../eroemelo_ai_kutatas_es_terv.md) | Sources, alternatives, pricing and professional hypotheses |

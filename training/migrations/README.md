@@ -8,7 +8,7 @@ Reproducible creation and later modification of the database structure.
 
 ## Current state
 
-[0001_initial.py](0001_initial.py) creates the five training models, their relations, and the uniqueness and value-range constraints. [0002_plan_versions_and_changes.py](0002_plan_versions_and_changes.py) adds the plan version number, the session status and the `PlanChange` table; existing plans start at version 1 and existing sessions as planned. Login and session tables are created by Django's own migrations.
+[0001_initial.py](0001_initial.py) creates the five training models, their relations, and the uniqueness and value-range constraints. [0002_plan_versions_and_changes.py](0002_plan_versions_and_changes.py) adds the plan version number, the session status and the `PlanChange` table; existing plans start at version 1 and existing sessions as planned. [0003_partial_and_batch_changes.py](0003_partial_and_batch_changes.py) adds the `move_rest` kind, the batch id, the continuation session and the moved-set count, and replaces the date/kind constraint. Login and session tables are created by Django's own migrations.
 
 **Not done:** versioning of prescribed sets, a PostgreSQL migration trial, an operational restore procedure. The database schema version is not the same thing as the version of an athlete's plan.
 
@@ -30,7 +30,7 @@ uv run python manage.py migrate
 uv run python manage.py test training
 ```
 
-Tests use a separate test database. Both training migrations ran locally; the latest check found no missing migration.
+Tests use a separate test database. All three training migrations ran locally (development and demo databases); the latest check found no missing migration.
 
 ## Next step
 

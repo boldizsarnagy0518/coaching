@@ -18,6 +18,7 @@ urlpatterns = [
 
 urlpatterns += [
     path("sessions/<int:pk>/change/<str:kind>/", views.session_change, name="session-change"),
+    path("plans/<int:pk>/reschedule/", views.plan_reschedule, name="plan-reschedule"),
     path("changes/<int:pk>/", views.change_detail, name="plan-change"),
     path("changes/<int:pk>/<str:action>/", views.change_review, name="plan-change-review"),
 ]

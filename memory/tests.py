@@ -169,7 +169,7 @@ class McpToolTests(TestCase):
         server = build_server(self.coach)
         names = {tool.name for tool in async_to_sync(server.list_tools)()}
         self.assertEqual(names, {"list_athletes", "get_athlete_context", "search_memories", "propose_memory",
-            "save_memory_on_coach_request", "propose_session_change"})
+            "save_memory_on_coach_request", "propose_session_change", "propose_reschedule"})
         result = async_to_sync(server.call_tool)("list_athletes", {})
         self.assertIn("Szintetikus", str(result))
 

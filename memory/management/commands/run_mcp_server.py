@@ -24,7 +24,9 @@ Otherwise, if you notice a fact that clearly meets the rules above, call propose
 the coach reviews proposals in the app. If a tool reports a duplicate, do not retry with a rephrasing.
 
 For schedule changes (missed session, different training days), use the upcoming_sessions from
-get_athlete_context and call propose_session_change. Never claim a change is applied: the coach
+get_athlete_context and call propose_session_change, or propose_reschedule when several sessions
+move (e.g. a new weekly schedule). If part of a session was already done, use kind="move_rest" for
+the remaining sets. Never claim a change is applied: the coach
 approves it in the app after seeing the before/after view. Do not change loads or exercises.
 
 Categories: {mcp_tools.CATEGORIES}."""
@@ -77,11 +79,22 @@ def build_server(coach):
     @server.tool(annotations=WRITE)
     async def propose_session_change(athlete_id: int, session_id: int, kind: str, reason: str,
             new_date: str | None = None) -> dict:
-        """Propose moving (kind="move", new_date YYYY-MM-DD) or skipping (kind="skip") one upcoming session.
+        """Propose a change to one session: kind="move" (whole unlogged session, new_date YYYY-MM-DD),
+        "skip" (whole unlogged session) or "move_rest" (only the unlogged sets of a partially logged
+        session go to a new continuation session on new_date).
 
-        Only unlogged sessions can change. Nothing is applied until the coach approves it in the app.
+        Nothing is applied until the coach approves it in the app.
         """
         return await run(mcp_tools.propose_session_change, athlete_id, session_id, kind, reason, new_date)
+
+    @server.tool(annotations=WRITE)
+    async def propose_reschedule(athlete_id: int, moves: list[dict], reason: str) -> dict:
+        """Propose a new schedule for several unlogged sessions of one plan as a single batch.
+
+        moves: [{"session_id": 12, "new_date": "YYYY-MM-DD"}, ...]. Use it when the training days change
+        (e.g. from 3 to 4 days a week). The coach approves or rejects the whole batch in the app.
+        """
+        return await run(mcp_tools.propose_reschedule, athlete_id, moves, reason)
 
     return server
 

@@ -76,7 +76,7 @@ After a restore, start the server and open `/healthz`. `COACHING_DB_PATH` points
 
 ## Verification
 
-`uv run python manage.py test ops`: 16 tests for the health check, request ID reuse and replacement, request and event logs (including that query strings, HEAD probes and memory content are not logged at info level), MCP error isolation and refusal outcomes, 404 and 409 pages, verified backups, retention, the command, `--verify` on a broken file, the transaction guard, restore with safety copy, restore refusals (broken, missing, same file, busy database) and the `--yes` requirement. Last local result: all passed (68/68 in the full suite, 94% branch coverage).
+`uv run python manage.py test ops`: 16 tests for the health check, request ID reuse and replacement, request and event logs (including that query strings, HEAD probes and memory content are not logged at info level), MCP error isolation and refusal outcomes, 404 and 409 pages, verified backups, retention, the command, `--verify` on a broken file, the transaction guard, restore with safety copy, restore refusals (broken, missing, same file, busy database) and the `--yes` requirement. Last local result: all passed (80/80 in the full suite, 95% branch coverage).
 
 Manual checks on the local database: `PRAGMA journal_mode` returns `wal`, `busy_timeout` is 20000 ms, and `backup_db` wrote and verified a backup.
 

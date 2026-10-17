@@ -1,5 +1,6 @@
 import csv
 import uuid
+from datetime import date
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,7 +14,16 @@ from django.views.decorators.http import require_POST
 from coaching.observability import log_event
 
 from . import plan_changes
-from .forms import AthleteForm, PlanChangeForm, PlanForm, PlannedSetForm, SessionForm, SetLogForm, TransferPreviewForm
+from .forms import (
+    AthleteForm,
+    PlanChangeForm,
+    PlanForm,
+    PlannedSetForm,
+    RescheduleForm,
+    SessionForm,
+    SetLogForm,
+    TransferPreviewForm,
+)
 from .models import (
     Athlete,
     ChangeKind,
@@ -113,9 +123,38 @@ def plan_create(request, pk):
 def plan_detail(request, pk):
     plan = get_object_or_404(TrainingPlan.objects.select_related("athlete"), pk=pk, athlete__coach=request.user)
     changes = list(plan.changes.select_related("session"))
-    return render(request, "training/plan.html", {"plan": plan,
-        "pending": [c for c in changes if c.status == ChangeStatus.PROPOSED],
+    pending, seen_batches = [], set()
+    for change in changes:
+        # A batch is listed once, by its first item; the detail page shows every move.
+        if change.status == ChangeStatus.PROPOSED and (change.batch is None or change.batch not in seen_batches):
+            seen_batches.add(change.batch)
+            pending.append(change)
+    return render(request, "training/plan.html", {"plan": plan, "pending": pending,
         "history": [c for c in changes if c.status != ChangeStatus.PROPOSED]})
+
+
+def _movable_sessions(plan):
+    """Upcoming planned sessions without any logged set, in date order."""
+    return list(plan.sessions.filter(status=SessionStatus.PLANNED, scheduled_date__gte=date.today())
+        .exclude(sets__performance__isnull=False).distinct().order_by("scheduled_date", "pk"))
+
+
+@login_required
+def plan_reschedule(request, pk):
+    plan = get_object_or_404(TrainingPlan.objects.select_related("athlete"), pk=pk, athlete__coach=request.user)
+    form = RescheduleForm(request.POST if request.method == "POST" else None, sessions=_movable_sessions(plan))
+    if request.method == "POST" and form.is_valid():
+        try:
+            changes = plan_changes.propose_batch(request.user, plan, form.moves(), form.cleaned_data["reason"])
+        except plan_changes.PlanChangeError as exc:
+            form.add_error(None, str(exc))
+        else:
+            return redirect("plan-change", pk=changes[0].pk)
+    return render(request, "training/form.html", {"form": form, "title": f"Átütemezés · {plan.title}",
+        "intro": "Írd át a jövőbeli, még nem naplózott edzések dátumát. A változások egy javaslatként, "
+            "előtte/utána nézettel kerülnek jóváhagyásra.",
+        "submit_label": "Előtte / utána megtekintése", "back_url": reverse("plan", args=[plan.pk]),
+        "back_label": plan.title})
 
 
 @login_required
@@ -129,9 +168,10 @@ def session_detail(request, pk):
     session = get_object_or_404(TrainingSession.objects.select_related("plan__athlete"), pk=pk, plan__athlete__coach=request.user)
     sets = list(session.sets.select_related("performance"))
     completed = sum(hasattr(item, "performance") for item in sets)
-    can_change = session.status == SessionStatus.PLANNED and not completed
+    planned = session.status == SessionStatus.PLANNED
     return render(request, "training/session.html", {"session": session, "sets": sets, "completed": completed,
-        "can_change": can_change, "pending_change": session.changes.filter(status=ChangeStatus.PROPOSED).first()})
+        "can_change": planned and not completed, "can_move_rest": planned and 0 < completed < len(sets),
+        "pending_change": session.changes.filter(status=ChangeStatus.PROPOSED).first()})
 
 
 @login_required
@@ -199,7 +239,9 @@ def session_change(request, pk, kind):
 def change_detail(request, pk):
     change = get_object_or_404(PlanChange.objects.select_related("plan__athlete", "session"), pk=pk,
         plan__athlete__coach=request.user)
-    return render(request, "training/plan_change.html", {"change": change, "rows": plan_changes.preview(change),
+    items = plan_changes.group(change)
+    return render(request, "training/plan_change.html", {"change": change, "items": items,
+        "rows": plan_changes.preview(change),
         "outdated": change.status == ChangeStatus.PROPOSED and change.plan.version != change.base_version})
 
 

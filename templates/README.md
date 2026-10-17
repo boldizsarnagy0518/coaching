@@ -16,14 +16,14 @@ The HTML screens served by Django. Input validation and data isolation are the b
 | [registration/login.html](registration/login.html) | Coach login |
 | [training/dashboard.html](training/dashboard.html) | Own athletes and number of plans |
 | [training/athlete.html](training/athlete.html) | One athlete's plans |
-| [training/plan.html](training/plan.html) | Sessions of one plan, version number, pending changes, change history |
-| [training/session.html](training/session.html) | Prescribed and actual sets, number of logged sets, move/skip buttons, skipped notice |
-| [training/plan_change.html](training/plan_change.html) | One change: before/after table, same-day conflict, approve/reject |
-| [training/form.html](training/form.html) | Shared data entry form; views can set the back link and the submit label |
+| [training/plan.html](training/plan.html) | Sessions of one plan, version number, reschedule button, pending changes (a batch listed once), change history |
+| [training/session.html](training/session.html) | Prescribed and actual sets, number of logged sets, move/skip buttons or the remaining-sets button for a partial session, skipped notice |
+| [training/plan_change.html](training/plan_change.html) | One change or a whole batch: before/after table with notes (kept/moved sets, new continuation session), same-day conflict, approve/reject |
+| [training/form.html](training/form.html) | Shared data entry form; views can set the back link, an intro line and the submit label (also used for the reschedule form, one date per session) |
 | [training/transfer.html](training/transfer.html) | CSV / Google Sheets structural preview |
 | [memory/athlete_memory.html](memory/athlete_memory.html) | Athlete memory: pending AI proposals, active entries by category, new entry form, resolved history |
 
-**Not done:** athlete self-service UI, multi-session re-planning screen, later correction of logs, offline drafts. "Partially completed" is derived from the number of log records; it is not a separate session status model.
+**Not done:** athlete self-service UI, drag-and-drop weekly planner, later correction of logs, offline drafts. "Partially completed" is derived from the number of log records; it is not a separate session status model.
 
 ## Decisions and reasoning
 
@@ -41,4 +41,4 @@ The [functional tests](../training/tests.py) and the [memory tests](../memory/te
 
 ## Next step
 
-A multi-session before/after view for changing the number of training days. A separate usability trial is needed to measure whether logging on a phone can be completed without help. Styling decisions: [static](../static/README.md).
+A separate usability trial is needed to measure whether logging on a phone can be completed without help. Styling decisions: [static](../static/README.md).

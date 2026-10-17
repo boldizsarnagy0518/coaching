@@ -53,6 +53,7 @@ class TrainingSession(models.Model):
 class ChangeKind(models.TextChoices):
     MOVE = "move", "Áthelyezés"
     SKIP = "skip", "Kihagyás"
+    MOVE_REST = "move_rest", "Hátralévő sorozatok áthelyezése"
 
 
 class ChangeStatus(models.TextChoices):
@@ -76,6 +77,8 @@ class PlanChange(models.Model):
     plan = models.ForeignKey(TrainingPlan, related_name="changes", on_delete=models.PROTECT)
     session = models.ForeignKey(TrainingSession, related_name="changes", on_delete=models.PROTECT)
     kind = models.CharField(max_length=10, choices=ChangeKind.choices)
+    # Changes proposed together (e.g. a new weekly schedule) share a batch id and are approved as one version.
+    batch = models.UUIDField(null=True, blank=True, db_index=True)
     status = models.CharField(max_length=10, choices=ChangeStatus.choices, default=ChangeStatus.PROPOSED)
     source = models.CharField(max_length=10, choices=ChangeSource.choices, default=ChangeSource.COACH)
     base_version = models.PositiveIntegerField()
@@ -89,13 +92,18 @@ class PlanChange(models.Model):
     reviewed_at = models.DateTimeField(null=True, blank=True)
     # Plan version created by this change when approved.
     result_version = models.PositiveIntegerField(null=True, blank=True)
+    # For move_rest: the continuation session created on approval and the number of sets moved there.
+    created_session = models.ForeignKey(TrainingSession, related_name="+", null=True, blank=True,
+        on_delete=models.PROTECT)
+    moved_sets = models.PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at", "-pk"]
         constraints = [
             models.CheckConstraint(
-                condition=(models.Q(kind="move", new_date__isnull=False) | models.Q(kind="skip", new_date__isnull=True)),
-                name="plan_change_new_date_matches_kind"),
+                condition=(models.Q(kind__in=["move", "move_rest"], new_date__isnull=False)
+                    | models.Q(kind="skip", new_date__isnull=True)),
+                name="plan_change_new_date_matches_kind_v2"),
         ]
 
     def __str__(self):
