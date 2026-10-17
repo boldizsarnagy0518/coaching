@@ -18,7 +18,7 @@ Everything that keeps the app observable and its data safe while running: reques
 | SQLite | WAL journal, 20 s busy timeout, `IMMEDIATE` write transactions, `synchronous=NORMAL` | PostgreSQL for multi-user hosting |
 | Backups | `backup_db`: online backup API, integrity check, retention (default 14), 60 s timeout, refuses to run inside a transaction, never overwrites a same-second backup; `--verify FILE` | Off-machine copy |
 | Restore | `restore_db --from FILE --yes`: verifies the backup, refuses while another process holds the database, saves the current content as `pre-restore-*.sqlite3`, copies with the backup API and re-checks integrity | Restoring a single athlete or table |
-| Scheduling | [register-backup-task.ps1](../scripts/register-backup-task.ps1) registers a daily Windows task, optionally copying the newest backup to another folder (`-CopyTo`). On the development machine the `CoachingBackup` task runs daily at 21:00 without `-CopyTo` | Backups stay on the same disk until `-CopyTo` is added |
+| Scheduling | [register-backup-task.ps1](../scripts/register-backup-task.ps1) registers a daily Windows task, optionally copying the newest backup to another folder (`-CopyTo`). Not registered on the development machine: it was tried and then removed at the user's request (the console window that opens on each run was not wanted) | Backups run only when started manually; the task opens a visible console window while it runs |
 | Demo login | `create_demo_coach` (debug only) creates an account with a generated password stored in `.local/demo-credentials.txt`, never printed and never reset | — |
 | Error pages | Hungarian 404 and 500 pages; log conflicts (409) render a page with a link back instead of plain text | Custom 403/CSRF page |
 | MCP robustness | Each tool call gets a correlation id (`mcp-…`), fresh DB connection handling, timing, and error isolation: unexpected errors return a generic message with a reference, the traceback goes to the log | Rate limiting per client |
@@ -83,12 +83,12 @@ Manual checks on the local database: `PRAGMA journal_mode` returns `wal`, `busy_
 
 **Browser check (17 October 2026),** at phone width (375 px) on the demo database: login, athlete page with memory counter, memory page (proposal, active entries, form), session page, move proposal with the before/after table and the same-day warning, approval and the plan page at version 2. No console errors; request and event log lines appeared as expected. Found and fixed: the change and log forms linked back to the athlete list instead of the session, and HEAD probes flooded the log.
 
-**Scheduled backup (17 October 2026):** the `CoachingBackup` task was registered for 21:00 daily (no off-machine copy, at the user's choice) and started once manually: result code 0 and a new verified backup in `.local/backups`.
+**Scheduled backup (17 October 2026):** the `CoachingBackup` task was registered for 21:00 daily and started once manually: result code 0 and a new verified backup in `.local/backups`. It was then unregistered at the user's request; the script is kept for later use.
 
 A concurrent load test of the web server and the MCP server together has not been done.
 
 ## Next step
 
-1. Add an off-machine copy: rerun the script with `-CopyTo` (it replaces the existing task).
+1. If scheduled backups are wanted again: a hidden-window launcher for the task, and `-CopyTo` for an off-machine copy.
 2. A short concurrency test: web server and MCP server writing at the same time.
 3. Before any hosted deployment: PostgreSQL, central logs, alerting on 5xx and failed backups, and a Content Security Policy.
