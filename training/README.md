@@ -42,11 +42,16 @@ Az 1–100 célismétlés, 0–100 tényleges ismétlés és 1–10 RPE **bevite
 
 ## Ellenőrzés
 
-`uv run python manage.py test training` a projekt gyökeréből. A jelenlegi 14 teszt ellenőrzi a teljes létrehozási utat, az idegen edző hozzáférésének tiltását, az újraküldést, az ütközéseket, hibás értékeket, opcionális RPE-t, részleges naplózást, CSRF-et, HTML-escapinget és a demóadat ismételhetőségét. Utolsó helyi eredmény: 14/14 sikeres.
+`uv run python manage.py test training` a projekt gyökeréből. A modul két tesztfájlja összesen 26 tesztet tartalmaz:
+
+- [tests.py](tests.py), 14 teszt: a teljes létrehozási út, az idegen edző hozzáférésének tiltása, az újraküldés, az ütközések, hibás értékek, opcionális RPE, részleges naplózás, CSRF, HTML-escaping és a demóadat ismételhetősége.
+- [test_transfers.py](test_transfers.py), 12 teszt: CSV-export és -előnézet, URL- és átirányítás-korlátozás, hozzáférés, valamint az, hogy az előnézet oldal első megnyitásakor nem jelenik meg hibaüzenet.
+
+Utolsó helyi eredmény: 26/26 sikeres.
 
 ## Következő lépés
 
-Új alrész: [CSV és Google Sheets](../docs/data-transfer/README.md). A `transfers.py` közös CSV-olvasót és korlátozott online letöltést ad; a nézetek saját sportolóhoz kötött exportot és csak olvasható előnézetet biztosítanak. A teljes csomag most 25 sikeres helyi teszt: 14 eredeti és 11 új adatátadási teszt a [test_transfers.py](test_transfers.py) fájlban.
+Új alrész: [CSV és Google Sheets](../docs/data-transfer/README.md). A `transfers.py` közös CSV-olvasót és korlátozott online letöltést ad; a nézetek saját sportolóhoz kötött exportot és csak olvasható előnézetet biztosítanak. A tesztek száma és eredménye az Ellenőrzés részben szerepel.
 
 Tervverziók, majd strukturált áthelyezési kérés, ellenőrizhető javaslat és edzői jóváhagyás. A mostani modul nem tervez újra, nem hív AI-t és nem ad sérüléskezelési tanácsot.
 

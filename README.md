@@ -14,7 +14,7 @@ Frissítve: 2026. október 17. Jelenleg helyi edzői naplózó prototípus műk�
 | Demóadat és kezelői parancsok | Szintetikus példa meglévő fiókhoz | [management](training/management/README.md) |
 | Felület és űrlapok | Magyar, szerveroldali edzői képernyők | [templates](templates/README.md) |
 | Megjelenés | Egy reszponzív stíluslap | [static](static/README.md) |
-| Automatizált ellenőrzés | 25 helyi teszt sikeres; CI definiálva | [workflows](.github/workflows/README.md) |
+| Automatizált ellenőrzés | 26 helyi teszt sikeres; CI definiálva | [workflows](.github/workflows/README.md) |
 | Tervezés és validáció | Dokumentálva; piaci kapu még nyitott | [docs](docs/README.md) |
 | CSV és Google Sheets | CSV-export, fájl- és publikált linkes előnézet | [Adatátadás](docs/data-transfer/README.md) |
 

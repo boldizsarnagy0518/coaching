@@ -44,7 +44,7 @@ Exportoszlopok: `plan`, `session`, `scheduled_date`, `exercise`, `planned_reps`,
 
 ## Ellenőrzés
 
-`uv run python manage.py test`: 25 sikeres helyi teszt. Az új ellenőrzések: export, hozzáférés, fájlelőnézet, hibás CSV, elválasztók, méretkorlát, képletvédelem, URL- és átirányítás-korlátozás, szimulált online válasz. Élő Google-táblázatos próba még szükséges.
+`uv run python manage.py test`: 26 sikeres helyi teszt. Az adatátadási ellenőrzések: export, hozzáférés, fájlelőnézet, hibás CSV, elválasztók, méretkorlát, képletvédelem, URL- és átirányítás-korlátozás, szimulált online válasz, valamint hibaüzenet nélküli első megnyitás. Élő Google-táblázatos próba még szükséges.
 
 Kód: [transfers.py](../../training/transfers.py), [nézetek](../../training/views.py), [tesztek](../../training/test_transfers.py).
 

@@ -19,7 +19,7 @@ Ez előrehozott technikai alap a felhasználó implementálási kérése alapjá
 
 ## Nyitott validáció
 
-Új műszaki rész: CSV-export, feltöltött CSV és publikált Google Sheets CSV-link szerkezeti előnézete. Ez még nem importál adatot. Privát Google-hitelesítés nincs. [Állapot és döntések](data-transfer/README.md). Ellenőrzés: 25 helyi teszt sikeres; az online lekérés szimulált válasszal tesztelt.
+Új műszaki rész: CSV-export, feltöltött CSV és publikált Google Sheets CSV-link szerkezeti előnézete. Ez még nem importál adatot. Privát Google-hitelesítés nincs. [Állapot és döntések](data-transfer/README.md). Ellenőrzés: 26 helyi teszt sikeres; az online lekérés szimulált válasszal tesztelt.
 
 - Saját valós esetek dokumentálása; nincs kitalált interjú vagy ügyféladat.
 - Edzői/sportolói interjúk és legalább 5 teljes kézi módosítás időmérése.

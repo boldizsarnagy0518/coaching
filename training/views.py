@@ -36,9 +36,11 @@ def export_csv(request, pk):
 @login_required
 def transfer_preview(request, pk):
     athlete = get_object_or_404(Athlete, pk=pk, coach=request.user)
-    form = TransferPreviewForm(request.POST if request.method == "POST" else None, request.FILES)
+    is_post = request.method == "POST"
+    # Passing request.FILES on GET would bind the form and show errors before any submission.
+    form = TransferPreviewForm(request.POST if is_post else None, request.FILES if is_post else None)
     preview = None
-    if request.method == "POST" and form.is_valid():
+    if is_post and form.is_valid():
         try:
             file = form.cleaned_data.get("csv_file")
             preview = read_csv(file.read(MAX_BYTES + 1)) if file else download_sheet(form.cleaned_data["sheet_url"])

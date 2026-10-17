@@ -86,6 +86,11 @@ class TransferViewTests(TestCase):
         self.assertFalse(SetLog.objects.exists())
         self.assertEqual(TrainingPlan.objects.count(), 1)
 
+    def test_initial_get_shows_no_errors(self):
+        response = self.client.get(reverse('transfer-preview', args=[self.athlete.pk]))
+        self.assertFalse(response.context['form'].is_bound)
+        self.assertNotContains(response, 'Vagy CSV-fájlt válassz')
+
     def test_source_choice_and_login(self):
         url = reverse('transfer-preview', args=[self.athlete.pk])
         self.assertTrue(self.client.post(url, {}).context['form'].errors)
