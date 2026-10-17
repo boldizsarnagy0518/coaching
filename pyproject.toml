@@ -31,7 +31,8 @@ ignore = ["DJ001", "E501"]
 [tool.coverage.run]
 branch = true
 source = ["coaching", "training", "memory"]
-omit = ["*/migrations/*", "manage.py", "coaching/asgi.py", "coaching/wsgi.py"]
+# The concurrency check is a manual multi-process script, not part of the unit test run.
+omit = ["*/migrations/*", "ops/concurrency_check.py", "manage.py", "coaching/asgi.py", "coaching/wsgi.py"]
 
 [tool.coverage.report]
 show_missing = true

@@ -19,6 +19,7 @@ Everything that keeps the app observable and its data safe while running: reques
 | Backups | `backup_db`: online backup API, integrity check, retention (default 14), 60 s timeout, refuses to run inside a transaction, never overwrites a same-second backup; `--verify FILE` | Off-machine copy |
 | Restore | `restore_db --from FILE --yes`: verifies the backup, refuses while another process holds the database, saves the current content as `pre-restore-*.sqlite3`, copies with the backup API and re-checks integrity | Restoring a single athlete or table |
 | Scheduling | [register-backup-task.ps1](../scripts/register-backup-task.ps1) registers a daily Windows task, optionally copying the newest backup to another folder (`-CopyTo`). Not registered on the development machine: it was tried and then removed at the user's request (the console window that opens on each run was not wanted) | Backups run only when started manually; the task opens a visible console window while it runs |
+| Concurrency check | [concurrency_check.py](concurrency_check.py): several processes write to one throwaway SQLite file at once, half through the full web stack, half through the MCP tool wrapper, then data invariants are checked | Not run in CI (multi-process, a few seconds) |
 | Demo login | `create_demo_coach` (debug only) creates an account with a generated password stored in `.local/demo-credentials.txt`, never printed and never reset | — |
 | Error pages | Hungarian 404 and 500 pages; log conflicts (409) render a page with a link back instead of plain text | Custom 403/CSRF page |
 | MCP robustness | Each tool call gets a correlation id (`mcp-…`), fresh DB connection handling, timing, and error isolation: unexpected errors return a generic message with a reference, the traceback goes to the log | Rate limiting per client |
@@ -85,10 +86,9 @@ Manual checks on the local database: `PRAGMA journal_mode` returns `wal`, `busy_
 
 **Scheduled backup (17 October 2026):** the `CoachingBackup` task was registered for 21:00 daily and started once manually: result code 0 and a new verified backup in `.local/backups`. It was then unregistered at the user's request; the script is kept for later use.
 
-A concurrent load test of the web server and the MCP server together has not been done.
+**Concurrency check (17 October 2026):** `uv run python -m ops.concurrency_check --workers 12 --ops 150` on a throwaway database: 12 processes (6 web, 6 MCP), 1,800 operations in 6.7 s. No unexpected errors and no "database is locked"; every refusal was a rule (duplicate log 409, stale approval, pending-proposal cap). Invariants held: contiguous plan versions, plan version = 1 + approved changes, at most one log per set, no skip approved after its session was logged. An 8 × 60 run gave the same result. This is a single-machine check, not a performance benchmark.
 
 ## Next step
 
 1. If scheduled backups are wanted again: a hidden-window launcher for the task, and `-CopyTo` for an off-machine copy.
-2. A short concurrency test: web server and MCP server writing at the same time.
-3. Before any hosted deployment: PostgreSQL, central logs, alerting on 5xx and failed backups, and a Content Security Policy.
+2. Before any hosted deployment: PostgreSQL, central logs, alerting on 5xx and failed backups, and a Content Security Policy.

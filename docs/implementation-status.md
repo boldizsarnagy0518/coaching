@@ -53,10 +53,10 @@ This is a technical foundation brought forward at the user's request. It does no
 2. Changing the number of training days (e.g. 3 → 4) as one multi-session proposal.
 3. Versioned prescriptions, so load and exercise swaps can use the same approval flow.
 4. Trying the MCP server in a real AI client with synthetic data and tuning the memory rules.
-5. A concurrency test of the web and MCP servers.
+5. Repeating the concurrency check after larger data-model changes.
 
 ## Not done yet
 
-Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; multi-session re-planning; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; editing memory entries; billing; public deployment; scheduled and off-machine backups; load testing; a complete data-handling process.
+Athlete self-service login; approved CSV import and column mapping; private Google Sheets connection; correction workflow for past logs; full offline operation; multi-session re-planning; load/exercise changes; prescription versioning; in-app AI chat and AI-assisted plan proposals; editing memory entries; billing; public deployment; scheduled and off-machine backups; load testing beyond the single-machine concurrency check; a complete data-handling process.
 
 The current UI is built for coaches: the coach records the athlete's data. The app does not change loads automatically and gives no injury-management advice. It is not yet suitable for running a live service with real athlete data.
